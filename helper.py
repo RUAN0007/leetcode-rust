@@ -24,11 +24,11 @@ def test_solution(qid):
             break
     
     if prob_filename == "":
-        eprint("Fail to download Problem {}".format(qid))
+        eprint("Fail to find Problem {}".format(qid))
         return 1
 
     filename_no_suffix = prob_filename.split(".")[0]
-    command = "bash -c \"cargo test problem::{}::tests::test_{} -- --exact\"".format(filename_no_suffix, qid)
+    command = "bash -c \"cargo test problem::{}::tests::test_{} -- --exact --nocapture\"".format(filename_no_suffix, qid)
     os.system(command)
 
     return 0
@@ -44,20 +44,6 @@ def init_problem(qid):
             eprint("Problem {} already exists.".format(qid))
             return 1
 
-    # Check solution exists
-    sol_name_pattern = r"^s{0:04d}(\D)*.rs$".format(qid)
-    solution_path = ""
-    for filename in os.listdir(kSolutionDir):
-        # print filename
-        if re.match(sol_name_pattern, filename):
-            solution_path = os.path.join(kSolutionDir, filename)
-            break
-        else:
-            continue
-
-    if solution_path == "":
-        eprint("Solution {} not found in {}".format(qid, kSolutionDir))
-        return 1
 
     # Remove the corresponding line in problem/mod.rs
     # Otherwise, later 'cargo run' cmd may fail. 
@@ -76,6 +62,21 @@ def init_problem(qid):
     # Invoke 'cargo run' to fetch the problem from Leetcode
     command = "bash -c \"cargo run <<< {}\"".format(qid)
     os.system(command)
+
+    # Check solution exists
+    sol_name_pattern = r"^s{0:04d}(\D)*.rs$".format(qid)
+    solution_path = ""
+    for filename in os.listdir(kSolutionDir):
+        # print filename
+        if re.match(sol_name_pattern, filename):
+            solution_path = os.path.join(kSolutionDir, filename)
+            break
+        else:
+            continue
+
+    if solution_path == "":
+        eprint("Solution {} not found in {}. No update on problem tests.".format(qid, kSolutionDir))
+        return 0
 
     # Get problem_lines and get line number of tests session
     problem_path = ""
