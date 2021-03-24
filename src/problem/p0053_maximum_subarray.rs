@@ -37,34 +37,21 @@ pub struct Solution {}
 
 impl Solution {
     pub fn max_sub_array(nums: Vec<i32>) -> i32 {
-        let mut sums = Vec::with_capacity(nums.len()+1);
-        let (mut cur_sum, mut min_sum, mut max_sum, mut max_num) = (0, 0, 0, i32::MIN);
-        let (mut min_sum_idx, mut max_sum_idx, mut max_idx) = (0, 0, 0);
-
-        sums.push(0);
-        for (idx, &num) in nums.iter().enumerate() {
-            if max_num <= num {
-                max_idx = idx+1;
-                max_num = num;
+        let mut max_sum = -100000;
+        let mut last_sum = -1; // the sum of max array ending at i-1 element, in each iteration. 
+        for num in nums {
+            let my_sum : i32; // the sum of max array ending at this element. 
+            if last_sum < 0 {
+                // It is better to give up with the previous array
+                my_sum = num;
+            } else {
+                // It is better to concat with the previous array
+                my_sum = last_sum + num;
             }
-
-            cur_sum += num;
-            if cur_sum < min_sum {
-                min_sum = cur_sum;
-                min_sum_idx = idx+1;
-            }
-            if max_sum < cur_sum {
-               max_sum = cur_sum; 
-               max_sum_idx = idx+1;
-            }
-            sums.push(cur_sum);
+            max_sum = std::cmp::max(max_sum, my_sum);
+            last_sum = my_sum;
         }
-        print!("sums: {:?}, max_sum: {}, min_sum: {}", sums, max_sum, min_sum);
-        if min_sum_idx < max_sum_idx {
-            return max_sum - min_sum
-        } else {
-            return max_num
-        }
+        max_sum
     }
 }
 
