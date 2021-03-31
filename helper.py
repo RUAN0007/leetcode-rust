@@ -16,7 +16,7 @@ def eprint(msg):
 def test_solution(qid):
     """Invoke cargo test on the given problem
     """
-    prob_name_pattern = r"p{0:04d}(\D)*.rs$".format(qid)
+    prob_name_pattern = r"p{0:04d}([a-zA-Z0-9_])*.rs$".format(qid)
     prob_filename = ""
     for filename in os.listdir(kProblemDir):
         if re.match(prob_name_pattern, filename):
