@@ -108,3 +108,6 @@ mod p0164_maximum_gap;
 mod p1647_minimum_deletions_to_make_character_frequencies_unique;
 mod p1648_sell_diminishing_valued_colored_balls;
 mod p0410_split_array_largest_sum;
+mod p0179_largest_number;
+mod p0220_contains_duplicate_iii;
+mod p0324_wiggle_sort_ii;

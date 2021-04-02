@@ -124,6 +124,40 @@ impl Solution {
         }
         -1
     }
+
+    pub fn max_heapify(nums: &mut Vec<i32>, max_len: usize, start_pos: usize) {
+        let left_pos = 2 * start_pos + 1;
+        let right_pos = 2 * (start_pos + 1);
+
+        let mut large_pos = None;
+        let mut large_val = nums[start_pos];
+        if left_pos < max_len && large_val < nums[left_pos] {
+            large_val = nums[left_pos];
+            large_pos = Some(left_pos);
+        }
+
+        if right_pos < max_len && large_val < nums[right_pos] {
+            large_val = nums[right_pos];
+            large_pos = Some(right_pos);
+        }
+
+        if let Some(large_pos) = large_pos {
+            nums.swap(start_pos, large_pos);
+            Self::max_heapify(nums, max_len, large_pos);
+        }
+    }
+
+    pub fn heap_sort(nums: &mut Vec<i32>) {
+        let n = nums.len();
+        for i in (0..(n/2)).rev() {
+            Self::max_heapify(nums, nums.len() , i);
+        }
+
+        for i in (0..n).rev() {
+            nums.swap(0, i);
+            Self::max_heapify(nums, i, 0);
+        }
+    }
 }
 
 // submission codes end
@@ -134,46 +168,50 @@ mod tests {
 
     #[test]
     fn test_0() {
-        assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],0), -1);
-        assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],1), 0);
-        assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],2), -1);
-        assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],3), 2);
-        assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],5), 4);
-        assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],7), -1);
 
-        assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],0), -1);
-        assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],1), 1);
-        assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],2), -1);
-        assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],3), 3);
-        assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],5), 5);
-        assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],7), -1);
+        let mut r = vec![12,11,13,5,6,7];
+        Solution::heap_sort(&mut r);
+        assert_eq!(r, vec![5,6,7,11,12,13]);
+        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],0), -1);
+        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],1), 0);
+        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],2), -1);
+        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],3), 2);
+        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],5), 4);
+        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],7), -1);
 
-        assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],0), 0);
-        assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],1), 2);
-        assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],2), 2);
-        assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],3), 4);
-        assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],5), -1);
-        assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],7), -1);
+        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],0), -1);
+        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],1), 1);
+        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],2), -1);
+        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],3), 3);
+        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],5), 5);
+        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],7), -1);
 
-        assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],0), 0);
-        assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],1), 0);
-        assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],2), 2);
-        assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],3), 2);
-        assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],5), 4);
-        assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],7), -1);
+        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],0), 0);
+        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],1), 2);
+        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],2), 2);
+        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],3), 4);
+        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],5), -1);
+        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],7), -1);
 
-        assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],0), -1);
-        assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],1), -1);
-        assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],2), 1);
-        assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],3), 1);
-        assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],5), 3);
-        assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],7), 5);
+        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],0), 0);
+        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],1), 0);
+        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],2), 2);
+        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],3), 2);
+        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],5), 4);
+        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],7), -1);
 
-        assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],0), -1);
-        assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],1), 1);
-        assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],2), 1);
-        assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],3), 3);
-        assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],5), 5);
-        assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],7), 5);
+        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],0), -1);
+        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],1), -1);
+        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],2), 1);
+        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],3), 1);
+        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],5), 3);
+        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],7), 5);
+
+        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],0), -1);
+        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],1), 1);
+        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],2), 1);
+        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],3), 3);
+        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],5), 5);
+        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],7), 5);
     }
 }
