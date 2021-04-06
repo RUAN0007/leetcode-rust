@@ -158,6 +158,74 @@ impl Solution {
             Self::max_heapify(nums, i, 0);
         }
     }
+
+    pub fn zero_right_digits(x : i32, digit_count: usize) -> i32 {
+        x & (!0 << digit_count)
+    }
+    
+    pub fn nth_digit(x : i32, n : usize) -> i32 {
+        (x >> n) & 1
+    }
+    // if n-th digit is 1, return 2^n, else 0. 
+    // n starts from 0. 
+    pub fn nth_digit_power(x : i32, n : usize) -> i32 {
+        x & (1 << n)
+    }
+
+    pub fn set_nth_digit_one(x: i32, n: usize) -> i32 {
+        x | (1 << n)
+    }
+
+    pub fn set_nth_digit_zero(x: i32, n: usize) -> i32 {
+        x & (!(1 << n))
+    }
+
+    // inclusive of nth
+    pub fn set_zero_from_nth(x: i32, n: usize) -> i32  {
+        x & ((1 << n) - 1)
+    }
+
+    // inclusive of nth
+    pub fn set_zero_to_nth(x: i32, n: usize) -> i32  {
+        x & (!((1 << (n + 1)) - 1))
+    }
+
+    // set the least significant bit-1 to 0. 
+    pub fn set_lsb1_zero(x: i32) -> i32 {
+        x & (x-1)
+    }
+
+    // 2^(pos of lsb 1)
+    pub fn lsb1_power(x: i32) -> i32 {
+        x & -x
+    }
+
+    pub fn digit1_count(mut x: i32) -> usize {
+        let mut count = 0;
+        while x != 0 {
+            x = Self::set_lsb1_zero(x);
+            count+=1;
+        }
+        count
+    }
+
+    // the largest power of 2 le to x
+    pub fn largest_power(mut x : u32) -> u32 {
+        // println!("{:#032b}", x);
+        x = x | (x>>1);
+        // println!("{:#032b}", x);
+        x = x | (x>>2);
+        // println!("{:#032b}", x);
+        x = x | (x>>4);
+        // println!("{:#032b}", x);
+        x = x | (x>>8);
+        // println!("{:#032b}", x);
+        x = x | (x>>16);
+        // println!("{:#032b}", x);
+        x = (x+1)>>1;
+        // println!("{:#032b}", x);
+        x
+    }
 }
 
 // submission codes end
@@ -169,9 +237,39 @@ mod tests {
     #[test]
     fn test_0() {
 
-        let mut r = vec![12,11,13,5,6,7];
-        Solution::heap_sort(&mut r);
-        assert_eq!(r, vec![5,6,7,11,12,13]);
+        assert_eq!(Solution::largest_power(9), 8);
+        // assert_eq!(Solution::zero_right_digits(7, 1), 6);
+        // assert_eq!(Solution::zero_right_digits(8, 2), 8);
+        // assert_eq!(Solution::zero_right_digits(-3, 2), -4);
+
+        // assert_eq!(Solution::nth_digit(-3, 0), 1);
+        // assert_eq!(Solution::nth_digit(-3, 1), 0);
+
+        // assert_eq!(Solution::nth_digit_power(-3, 1), 0);
+        // assert_eq!(Solution::nth_digit_power(5, 2), 4);
+
+        // assert_eq!(Solution::set_nth_digit_zero(5, 2), 1);
+        // assert_eq!(Solution::set_nth_digit_one(5, 1), 7);
+
+        // assert_eq!(Solution::set_zero_from_nth(5, 1), 1);
+        // assert_eq!(Solution::set_zero_from_nth(5, 3), 5);
+        // assert_eq!(Solution::set_zero_from_nth(-3, 3), 5);
+        // assert_eq!(Solution::set_zero_from_nth(-3, 4), 13);
+
+        // assert_eq!(Solution::set_zero_to_nth(5, 0), 4);
+        // assert_eq!(Solution::set_zero_to_nth(5, 3), 0);
+
+        // assert_eq!(Solution::set_zero_to_nth(-3, 2), -8);
+        // assert_eq!(Solution::set_lsb1_zero(5), 4);
+        // assert_eq!(Solution::set_lsb1_zero(6), 4);
+
+        // assert_eq!(Solution::lsb1_power(6), 2);
+        // assert_eq!(Solution::lsb1_power(7), 1);
+        // assert_eq!(Solution::lsb1_power(8), 8);
+
+        // let mut r = vec![12,11,13,5,6,7];
+        // Solution::heap_sort(&mut r);
+        // assert_eq!(r, vec![5,6,7,11,12,13]);
         // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],0), -1);
         // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],1), 0);
         // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],2), -1);
