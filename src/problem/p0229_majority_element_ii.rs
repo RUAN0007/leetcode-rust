@@ -35,7 +35,44 @@ pub struct Solution {}
 
 impl Solution {
     pub fn majority_element(nums: Vec<i32>) -> Vec<i32> {
-        vec![]
+        let mut candidate1 = None;
+        let mut candidate2 = None;
+        let mut count1 = 0usize;
+        let mut count2 = 0usize;
+
+        for &num in &nums {
+            if Some(num) == candidate1 {
+                count1+=1;
+            } else if Some(num) == candidate2 {
+                count2+=1;
+            } else if count1 == 0 {
+                candidate1 = Some(num);
+                count1=1;
+            } else if count2 == 0 {
+                candidate2 = Some(num);
+                count2=1;
+            } else {
+                count1-=1;
+                count2-=1;
+            }
+            // if count1 == 0 {candidate1=None;}
+            // if count2 == 0 {candidate2=None;}
+        }
+
+        let mut result = vec![];
+        if let Some(candidate_num) = candidate1 {
+            if nums.iter().filter(|&x|{*x==candidate_num}).count() > nums.len()/3 {
+                result.push(candidate_num);
+            }
+        }
+
+        if let Some(candidate_num) = candidate2 {
+            if nums.iter().filter(|&x|{*x==candidate_num}).count() > nums.len()/3 {
+                result.push(candidate_num);
+            }
+        }
+
+        result
     }
 }
 
