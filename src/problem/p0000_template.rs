@@ -5,6 +5,7 @@ pub struct Solution {}
 
 // submission codes start here
 use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 impl Solution {
     pub fn first_equal(nums: Vec<i32>, target: i32) -> i32 {
@@ -225,6 +226,26 @@ impl Solution {
         x = (x+1)>>1;
         // println!("{:#032b}", x);
         x
+    }
+
+    pub fn last_entry_ordered_map(m : &BTreeMap<i32, i32>) -> (&i32, &i32) {
+        m.iter().next_back().unwrap()
+    }
+
+    // transform a string to a char vec for a constant-time complexity to reference a i-th char. 
+    pub fn str_to_char_vec(s : String) -> Vec<char> {
+        s.chars().collect()
+    }
+
+    pub fn incre_from_default(m: &mut HashMap<i32, usize>, key : i32) {
+        *(m.entry(key).or_insert(0))+=1;
+
+    }
+
+    pub fn char2idx(c : char) ->usize {
+        let base_idx = 'a' as u8 as usize;
+        let c_idx = c as u8 as usize;
+        c_idx - base_idx
     }
 }
 
