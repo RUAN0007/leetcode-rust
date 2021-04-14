@@ -8,14 +8,75 @@ use std::{collections::HashMap, hash::Hash};
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
-struct UnionFind<T :Eq + Hash + Copy> {
+
+struct UnionFindInt {
+    parents: Vec<usize>,
+    subset_sizes: Vec<usize>,
+    pub max_subset_size: usize,
+    pub subset_count: usize,
+}
+
+impl UnionFindInt {
+    fn new(element_count : usize) -> UnionFindInt {
+        let mut uf = UnionFindInt{
+            parents: (0..element_count).collect(),
+            subset_sizes: vec![1;element_count],
+            max_subset_size: 1,
+            subset_count: element_count};
+        uf
+    }
+
+    fn find_root(&self, element_id : usize) -> usize {
+        let mut root = element_id;
+        while root != self.parents[root] {
+            root = self.parents[root];
+        }
+        root
+    }
+
+    fn find_root_with_compression(&mut self, element_id : usize) -> usize {
+        let root = self.find_root(element_id);
+
+        // path compression
+        let mut element_id = element_id;
+        while self.parents[element_id] != root {
+            let tmp = self.parents[element_id];
+            self.parents[element_id] = root;
+            element_id = tmp;
+        }
+
+        root
+    }
+
+    fn union(&mut self, e1 : usize, e2 : usize) -> bool {
+        let root1 = self.find_root_with_compression(e1);
+        let root2 = self.find_root_with_compression(e2);
+        if root1 == root2 { return false; }
+
+        if self.subset_sizes[root1] < self.subset_sizes[root2] {
+            // anchor root1 tree under root2 tree
+            self.parents[root1] = root2;
+            self.subset_sizes[root2] += self.subset_sizes[root1];
+            self.max_subset_size = std::cmp::max(self.max_subset_size, self.subset_sizes[root2]);
+        } else {
+            self.parents[root2] = root1;
+            self.subset_sizes[root1] += self.subset_sizes[root2];
+            self.max_subset_size = std::cmp::max(self.max_subset_size, self.subset_sizes[root1]);
+        }
+        self.subset_count -=1;
+        true
+    }
+}
+
+
+struct UnionFind<T :Eq + Hash + Clone> {
     parents: HashMap<T,T>,
     subset_sizes: HashMap<T, usize>,
     pub max_subset_size: usize,
     pub subset_count: usize,
 }
 
-impl<T : Eq + Hash + Copy> UnionFind<T> {
+impl<T : Eq + Hash + Clone> UnionFind<T> {
     fn new() -> UnionFind<T> {
         let mut uf = UnionFind{
             parents: HashMap::new(), 
@@ -25,40 +86,40 @@ impl<T : Eq + Hash + Copy> UnionFind<T> {
         uf
     }
 
-    fn new_with(elements : HashSet<T>) -> UnionFind<T> {
+    fn new_with(elements : &HashSet<T>) -> UnionFind<T> {
         let mut uf = UnionFind{
             parents: HashMap::new(), 
             subset_sizes: HashMap::new(),
             max_subset_size: 1,
             subset_count: elements.len()};
         
-        for &e in &elements {
-            uf.parents.insert(e,e);
-            uf.subset_sizes.insert(e,1);
+        for e in elements {
+            uf.parents.insert(e.clone(),e.clone());
+            uf.subset_sizes.insert(e.clone(),1);
         }
 
         uf
     }
     // None if element is not found. 
-    fn find(&self, element : T) -> Option<T> {
-        if !self.parents.contains_key(&element) {
+    fn find(&self, element : &T) -> Option<T> {
+        if !self.parents.contains_key(element) {
             return None;
         }
 
-        let mut root = element;
+        let mut root = element.clone();
         while root != *self.parents.get(&root).unwrap() {
-            root = *self.parents.get(&root).unwrap();
+            root = self.parents.get(&root).unwrap().clone();
         }
         Some(root)
     }
 
-    fn find_along_compression(&mut self, element : T) -> Option<T> {
+    fn find_along_compression(&mut self, element : &T) -> Option<T> {
         if let Some(root) = self.find(element) {
             // path compression: redirects each node in the path to the root. 
-            let mut element = element;
+            let mut element = element.clone();
             while element != *self.parents.get(&element).unwrap() {
-                let tmp = *self.parents.get(&element).unwrap();
-                *self.parents.get_mut(&element).unwrap() = root;
+                let tmp = self.parents[&element].clone();
+                *self.parents.get_mut(&element).unwrap() = root.clone();
                 element = tmp;
             }
 
@@ -69,36 +130,36 @@ impl<T : Eq + Hash + Copy> UnionFind<T> {
     }
 
     // return whether the union has performed.     
-    fn union(&mut self, e1 : T, e2 : T ) -> bool {
+    fn union(&mut self, e1 : &T, e2 : &T ) -> bool {
         let root1 = self.find_along_compression(e1);
         let root2 = self.find_along_compression(e2);
 
         if root1.is_none() {
             // assume to insert this e1 and then do union
-            self.parents.insert(e1,e1);
-            self.subset_sizes.insert(e1,1);
+            self.parents.insert(e1.clone(),e1.clone());
+            self.subset_sizes.insert(e1.clone(),1);
             self.subset_count+=1;
         } 
 
         if root2.is_none() {
             // assume to insert this e1 and then do union
-            self.parents.insert(e2,e2);
-            self.subset_sizes.insert(e2,1);
+            self.parents.insert(e2.clone(),e2.clone());
+            self.subset_sizes.insert(e2.clone(),1);
             self.subset_count+=1;
         }
 
-        let root1= root1.unwrap_or(e1);
-        let root2= root2.unwrap_or(e2);
+        let root1= root1.unwrap_or(e1.clone());
+        let root2= root2.unwrap_or(e2.clone());
         if root1 == root2 {return false;}
 
         let root1_size = *self.subset_sizes.get(&root1).unwrap();
         let root2_size = *self.subset_sizes.get(&root2).unwrap();
         // concat the smaller tress to the larger
         if root1_size < root2_size {
-            *self.parents.get_mut(&root1).unwrap() = root2;
+            *self.parents.get_mut(&root1).unwrap() = root2.clone();
             *self.subset_sizes.get_mut(&root2).unwrap() += root1_size;
         } else {
-            *self.parents.get_mut(&root2).unwrap() = root1;
+            *self.parents.get_mut(&root2).unwrap() = root1.clone();
             *self.subset_sizes.get_mut(&root1).unwrap() += root2_size;
         }
         self.max_subset_size = std::cmp::max(self.max_subset_size, root1_size + root2_size);
@@ -435,17 +496,104 @@ mod tests {
 
 
         let mut elements = HashSet::new();
-        elements.insert(0);
-        elements.insert(1);
-        elements.insert(2);
-        elements.insert(3);
-        elements.insert(4);
-        let mut uf = UnionFind::new_with(elements);
+        let e0 = "0".to_owned();
+        let e1 = "1".to_owned();
+        let e2 = "2".to_owned();
+        let e3 = "3".to_owned();
+        let e4 = "4".to_owned();
+        let e5 = "5".to_owned();
+        elements.insert(e0.clone());
+        elements.insert(e1.clone());
+        elements.insert(e2.clone());
+        elements.insert(e3.clone());
+        elements.insert(e4.clone());
+        let mut uf = UnionFind::new_with(&elements);
         assert_eq!(uf.max_subset_size, 1);
         assert_eq!(uf.subset_count, 5);
-        assert_eq!(*uf.parents.get(&3).unwrap(), 3);
-        assert_eq!(uf.find(3), Some(3));
-        assert_eq!(uf.find(6), None);
+        assert_eq!(uf.parents[&e3], e3);
+        assert_eq!(uf.find(&e3), Some(e3.clone()));
+        assert_eq!(uf.find(&e5), None);
+
+        // shall result like
+        // 0 2 3 4
+        // - 
+        // 1
+        assert!(uf.union(&e0, &e1));
+        assert_eq!(uf.max_subset_size, 2);
+        assert_eq!(uf.subset_count, 4);
+        assert_eq!(uf.parents[&e0], e0);
+        assert_eq!(uf.parents[&e1], e0);
+        assert_eq!(uf.find(&e1), Some(e0.clone()));
+        assert_eq!(uf.find(&e4), Some(e4.clone()));
+
+        // shall result like
+        // 0 3 4
+        // - -
+        // 1 2
+        assert!(uf.union(&e3, &e2));
+        assert_eq!(uf.max_subset_size, 2);
+        assert_eq!(uf.subset_count, 3);
+        assert_eq!(uf.parents[&e2], e3);
+        assert_eq!(uf.parents[&e3], e3);
+        assert_eq!(uf.find(&e2), Some(e3.clone()));
+        assert_eq!(uf.find(&e4), Some(e4.clone()));
+
+        // shall result like
+        // 0   3 
+        // -  - -
+        // 1  2 4
+        assert!(uf.union(&e4, &e2));
+        assert!(!uf.union(&e1, &e0));
+        assert_eq!(uf.max_subset_size, 3);
+        assert_eq!(uf.subset_count, 2);
+        assert_eq!(uf.parents[&e2], e3);
+        assert_eq!(uf.parents[&e3], e3);
+        assert_eq!(uf.parents[&e4], e3);
+
+        // shall result like
+        //   3 
+        // - - -
+        // 0 2 4
+        // -
+        // 1
+        assert!(uf.union(&e1, &e4));
+        assert_eq!(uf.max_subset_size, 5);
+        assert_eq!(uf.subset_count, 1);
+        assert_eq!(uf.parents[&e0], e3);
+        assert_eq!(uf.parents[&e1], e0);
+        assert_eq!(uf.parents[&e2], e3);
+        assert_eq!(uf.find(&e1), Some(e3.clone()));
+        assert_eq!(uf.find(&e2), Some(e3.clone()));
+        assert_eq!(uf.find(&e4), Some(e3.clone()));
+
+        assert_eq!(uf.find_along_compression(&e1), Some(e3.clone()));
+        // shall result like
+        //   3 
+        // - - - -
+        // 0 1 2 4
+        assert_eq!(uf.parents[&e0], e3);
+        assert_eq!(uf.parents[&e1], e3);
+        assert_eq!(uf.parents[&e2], e3);
+
+        assert!(!uf.union(&e3, &e4));
+
+        // shall result like
+        //   3 
+        // - - - - -
+        // 0 1 2 4 5
+        assert!(uf.union(&e5, &e0)); // a new element 5
+        assert_eq!(uf.subset_count, 1);
+        assert_eq!(uf.max_subset_size, 6);
+        assert_eq!(uf.parents[&e5], e3);
+        assert_eq!(uf.find(&e5), Some(e3.clone()));
+
+
+
+        let mut uf = UnionFindInt::new(5);
+        assert_eq!(uf.max_subset_size, 1);
+        assert_eq!(uf.subset_count, 5);
+        assert_eq!(uf.find_root(3), 3);
+        assert_eq!(uf.find_root_with_compression(0), 0);
 
         // shall result like
         // 0 2 3 4
@@ -454,10 +602,9 @@ mod tests {
         assert!(uf.union(0, 1));
         assert_eq!(uf.max_subset_size, 2);
         assert_eq!(uf.subset_count, 4);
-        assert_eq!(*uf.parents.get(&0).unwrap(), 0);
-        assert_eq!(*uf.parents.get(&1).unwrap(), 0);
-        assert_eq!(uf.find(1), Some(0));
-        assert_eq!(uf.find(4), Some(4));
+        assert_eq!(uf.find_root(0), 0);
+        assert_eq!(uf.find_root(1), 0);
+        assert_eq!(uf.find_root(2), 2);
 
         // shall result like
         // 0 3 4
@@ -466,22 +613,21 @@ mod tests {
         assert!(uf.union(3, 2));
         assert_eq!(uf.max_subset_size, 2);
         assert_eq!(uf.subset_count, 3);
-        assert_eq!(*uf.parents.get(&2).unwrap(), 3);
-        assert_eq!(*uf.parents.get(&3).unwrap(), 3);
-        assert_eq!(uf.find(4), Some(4));
-        assert_eq!(uf.find(2), Some(3));
+        assert_eq!(uf.find_root(3), 3);
+        assert_eq!(uf.find_root(4), 4);
+        assert_eq!(uf.find_root_with_compression(2), 3);
 
         // shall result like
         // 0   3 
         // -  - -
         // 1  2 4
         assert!(uf.union(4, 2));
-        assert!(!uf.union(1, 0));
         assert_eq!(uf.max_subset_size, 3);
         assert_eq!(uf.subset_count, 2);
-        assert_eq!(*uf.parents.get(&4).unwrap(), 3);
-        assert_eq!(*uf.parents.get(&3).unwrap(), 3);
-        assert_eq!(*uf.parents.get(&2).unwrap(), 3);
+        assert_eq!(uf.find_root(1), 0);
+        assert_eq!(uf.find_root(2), 3);
+        assert_eq!(uf.find_root(3), 3);
+        assert_eq!(uf.find_root(4), 3);
 
         // shall result like
         //   3 
@@ -492,33 +638,25 @@ mod tests {
         assert!(uf.union(1, 4));
         assert_eq!(uf.max_subset_size, 5);
         assert_eq!(uf.subset_count, 1);
-        assert_eq!(*uf.parents.get(&1).unwrap(), 0);
-        assert_eq!(*uf.parents.get(&0).unwrap(), 3);
-        assert_eq!(*uf.parents.get(&2).unwrap(), 3);
+        assert_eq!(uf.parents[1], 0);
+        assert_eq!(uf.find_root(1), 3);
+        assert_eq!(uf.find_root(0), 3);
+        assert_eq!(uf.find_root(2), 3);
+        assert_eq!(uf.find_root(4), 3);
 
-        assert_eq!(uf.find(1), Some(3));
-        assert_eq!(uf.find(2), Some(3));
-        assert_eq!(uf.find(4), Some(3));
-
-        assert_eq!(uf.find_along_compression(1), Some(3));
+        assert_eq!(uf.find_root_with_compression(1), 3);
         // shall result like
         //   3 
         // - - - -
         // 0 1 2 4
-        assert_eq!(*uf.parents.get(&1).unwrap(), 3);
-        assert_eq!(*uf.parents.get(&0).unwrap(), 3);
-        assert_eq!(*uf.parents.get(&2).unwrap(), 3);
-
-        assert!(!uf.union(3, 4));
-
-        // shall result like
-        //   3 
-        // - - - - -
-        // 0 1 2 4 5
-        assert!(uf.union(5, 0)); // a new element 5
-        assert_eq!(*uf.parents.get(&5).unwrap(), 3);
-        assert_eq!(uf.find(5), Some(3));
+        assert_eq!(uf.max_subset_size, 5);
         assert_eq!(uf.subset_count, 1);
-        assert_eq!(uf.max_subset_size, 6);
+        assert_eq!(uf.parents[1], 3);
+        assert_eq!(uf.find_root(1), 3);
+        assert_eq!(uf.find_root(0), 3);
+        assert_eq!(uf.find_root(2), 3);
+        assert_eq!(uf.find_root(4), 3);
+
+
     }
 }
