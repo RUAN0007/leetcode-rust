@@ -168,7 +168,9 @@ impl<T : Eq + Hash + Clone> UnionFind<T> {
     }
 }
 
-impl Solution {
+struct BinarySearch {}
+
+impl BinarySearch {
     pub fn first_equal(nums: Vec<i32>, target: i32) -> i32 {
         let mut low = 0i32;
         let mut high = (nums.len() - 1) as i32;
@@ -286,7 +288,9 @@ impl Solution {
         }
         -1
     }
-
+}
+struct Heap{} 
+impl Heap{
     pub fn max_heapify(nums: &mut Vec<i32>, max_len: usize, start_pos: usize) {
         let left_pos = 2 * start_pos + 1;
         let right_pos = 2 * (start_pos + 1);
@@ -320,7 +324,9 @@ impl Solution {
             Self::max_heapify(nums, i, 0);
         }
     }
-
+}
+struct BitOp{} 
+impl BitOp {
     pub fn zero_right_digits(x : i32, digit_count: usize) -> i32 {
         x & (!0 << digit_count)
     }
@@ -388,25 +394,428 @@ impl Solution {
         // println!("{:#032b}", x);
         x
     }
-
-    pub fn last_entry_ordered_map(m : &BTreeMap<i32, i32>) -> (&i32, &i32) {
-        m.iter().next_back().unwrap()
-    }
-
+}
+#[derive(Debug, Clone, Copy)]
+struct StrUtil{} 
+impl StrUtil {
     // transform a string to a char vec for a constant-time complexity to reference a i-th char. 
     pub fn str_to_char_vec(s : String) -> Vec<char> {
         s.chars().collect()
-    }
-
-    pub fn incre_from_default(m: &mut HashMap<i32, usize>, key : i32) {
-        *(m.entry(key).or_insert(0))+=1;
-
     }
 
     pub fn char2idx(c : char) ->usize {
         let base_idx = 'a' as u8 as usize;
         let c_idx = c as u8 as usize;
         c_idx - base_idx
+    }
+
+    pub fn str2int(s : String) -> i32 {
+        s.parse::<i32>().unwrap()
+    }
+
+    pub fn int2str(i : i32) -> String {
+        i.to_string()
+    }
+
+    pub fn misc(s : String) {
+        let s : & str = &s[..];
+        let sub : String = s[1..2].to_owned();
+
+        let mut hello = String::from("Hello, ");
+        hello.push('w'); // concat char
+        hello.push_str("orld!"); // append str
+
+        let sentence: &'static str = "the quick brown fox jumps over the lazy dog";
+
+        // word typed as &str
+        for word  in sentence.split_whitespace().rev() {
+            // println!("> {}", word);
+        }
+
+        // Heap allocate a string
+        let alice = String::from("I like dogs");
+        // Allocate new memory and store the modified string there
+        let bob: String = alice.replace("dog", "cat");
+
+    }
+}
+
+struct VecUtil{} 
+impl VecUtil {
+    pub fn sort(v : &mut Vec<i32>) {
+       v.sort_by(|a : &i32,b: &i32|{a.cmp(b)});
+    }
+
+    pub fn range2vec(from_inclusive: i32, to_exclusive : i32) -> Vec<i32> {
+        (from_inclusive..to_exclusive).collect()
+    }
+
+    pub fn incre_foreach(v : &mut Vec<i32>) {
+        v.iter_mut().for_each(|x : &mut i32|{*x+=1})
+    }
+
+    pub fn incre_foreach_to_vec(v: &Vec<i32>) -> Vec<i32> {
+        v.iter().map(|x : &i32|{x+1}).collect()
+    }
+
+    pub fn stack() {
+        let mut s = vec![];
+        s.push(0);
+        let e : Option<i32> = s.pop();
+    }
+
+    pub fn queue() {
+        use std::collections::VecDeque;
+        let mut q: VecDeque<i32> = VecDeque::new();
+        q.push_back(0);
+        let e : Option<i32> = q.pop_front();
+    }
+
+    pub fn iterator_misc() {
+        let mut xs = vec![0;100];
+        let processed : Vec<i32> = xs.into_iter()
+            .skip(5) // skip the previous 5 elements
+            .filter(|x : &i32|{*x < 50}) // filter by a predicate
+            .take(10).collect(); // only consider the first 10.
+        let e1 : Option<&i32> = processed.iter().next();
+        let e10 : Option<&i32> = processed.iter().nth(10);
+        let last : Option<&i32> = processed.iter().last();
+        let sum : i32 = processed.iter().sum();
+        let count : usize = processed.iter().count();
+
+        let a1 = [1, 2, 3];
+        let a2 = [4, 5, 6];
+
+        let mut iter = a1.iter().zip(a2.iter());
+
+        assert_eq!(iter.next(), Some((&1, &4)));
+        assert_eq!(iter.next(), Some((&2, &5)));
+        assert_eq!(iter.next(), Some((&3, &6)));
+        assert_eq!(iter.next(), None);
+
+
+        let a = ["1", "two", "NaN", "four", "5"];
+        // Filter_map: The returned iterator yields only the values for which the supplied closure returns Some(value).
+        let mut iter = a.iter().filter_map(|s| s.parse().ok());
+
+        assert_eq!(iter.next(), Some(1));
+        assert_eq!(iter.next(), Some(5));
+        assert_eq!(iter.next(), None);
+
+        let words = ["alpha", "beta", "gamma"];
+        // Flat_map: Creates an iterator that works like map, but flattens nested structure.
+        let merged: String = words.iter()
+                                .flat_map(|s| s.chars())
+                                .collect();
+        assert_eq!(merged, "alphabetagamma".to_owned());
+
+                                let a = [1, 2, 3];
+
+        let (even, odd): (Vec<i32>, Vec<i32>) = a
+            .iter()
+            .partition(|&n| n % 2 == 0);
+
+        assert_eq!(even, vec![2]);
+        assert_eq!(odd, vec![1, 3]);
+
+        // Fold
+        let a = [1, 2, 3];
+        let sum = a.iter().fold(0, |acc : i32, x : &i32| {acc + x});
+        assert_eq!(sum, 6);
+
+        // All/any: Tests if every/any element of the iterator matches a predicate.
+        let a = [1, 2, 3];
+        assert!(a.iter().all(|x : &i32| *x > 0));
+        assert!(a.iter().any(|x : &i32| *x > 0));
+        
+        // Find: find an element idx from left
+        // position/rposition: right the element index
+        let a = [1, 2, 3, 2];
+        assert_eq!(a.iter().find(|x : &&i32| **x == 2), Some(&2));
+        assert_eq!(a.iter().position(|x : &i32| *x == 2), Some(1usize));
+        assert_eq!(a.iter().rposition(|x : &i32| *x == 2), Some(3usize));
+
+        let m : Option<&i32> = a.iter().max(); // min or max_by_key, max_by
+        assert_eq!(m, Some(&3));
+    }
+
+    pub fn misc() {
+        let mut xs = vec![1i32, 2, 3];
+
+        // Insert new element at the end of the vector
+        xs.push(4);
+        assert_eq!(xs, vec![1,2,3,4]);
+
+        // The `len` method yields the number of elements currently stored in a vector
+        assert_eq!(xs.len(), 4);
+
+        // Indexing is done using the square brackets (indexing starts at 0)
+        assert_eq!(xs[1], 2);
+
+        // `pop` removes the last element from the vector and returns it
+        assert_eq!(xs.pop(), Some(4));
+
+        // `Vector`s can be easily iterated over
+        // println!("Contents of xs:");
+        // x typed as &i32
+        for x in xs.iter() {
+            // println!("> {}", x);
+        }
+
+        // x typed as &mut i32
+        for x in xs.iter_mut() {
+            *x +=1;
+        }
+
+        // A `Vector` can also be iterated over while the iteration
+        // count is enumerated in a separate variable (`i`)
+        // i typed as usize. x typed as &i32
+        for (i, x) in xs.iter().enumerate() {
+            // println!("In position {} we have value {}", i, x);
+        }
+    }
+}
+
+struct MapUtil{} 
+impl MapUtil {
+    pub fn hashmap_misc() {
+        let mut map : HashMap<String, String> = HashMap::new();
+        let k1 = String::from("k1");
+        let v1 = String::from("v1");
+        let prev_val : Option<String> =map.insert(k1, v1); // k1, v1 is consumed here.
+        assert_eq!(prev_val, None);
+
+        // map.insert(k1,v1); illegal.
+        let k1 = String::from("k1");
+        let v1 = String::from("v11");
+        let prev_val : Option<String> =map.insert(k1, v1); // k1, v1 is consumed here.
+        assert_eq!(prev_val, Some(String::from("v1")));
+
+        let k1 = String::from("k1");
+        let v1 = String::from("v11");
+        assert_eq!(map[&k1], v1);
+
+        // basic
+        let mut map = HashMap::new();
+        map.insert(1, "a".to_owned());
+        map.insert(2, "b".to_owned());
+        map.insert(3, "c".to_owned());
+        assert_eq!(map.get(&1), Some(&"a".to_owned()));
+        assert_eq!(map.get(&4), None);
+
+        assert_eq!(map.contains_key(&1), true);
+        assert_eq!(map.contains_key(&4), false);
+
+        // insert with default
+        *(map.entry(5).or_insert("d".to_owned()))= "dd".to_owned();
+        assert_eq!(map.get(&5), Some(&"dd".to_owned()));
+
+        if let Some(x) = map.get_mut(&1) {
+            *x = "b".to_owned();
+        }
+        assert_eq!(map[&1], "b".to_owned());
+        // iteration:
+        // key typed as &i32, value typed as &String
+        for key in map.keys() {
+            // println!("{}", key);
+        }
+
+        for val in map.values_mut() {
+            *val = "asd".to_owned();
+        }
+
+        for val in map.values() {
+            // println!("{}", val);
+        }
+
+        for (key, val) in map.iter() {
+            // println!("key: {} val: {}", key, val);
+        }
+
+        for (_, val) in map.iter_mut() {
+            *val = "asd".to_owned();
+        }
+        assert_eq!(map.remove_entry(&1), Some((1, "asd".to_owned())));
+        assert_eq!(map.remove(&1), None);
+        map.clear();
+
+    }
+
+    pub fn orderedmap_misc() {
+        use std::ops::Bound::Included;
+        let mut om : BTreeMap<String, String> = BTreeMap::new();
+        om.insert("k1".to_owned(), "v1".to_owned());
+        om.insert("k2".to_owned(), "v2".to_owned());
+
+        // the smallest entry
+        assert_eq!(om.iter().next(), Some((&"k1".to_owned(), &"v1".to_owned())));
+
+        // the greatest entry
+        assert_eq!(om.iter().next_back(), Some((&"k2".to_owned(), &"v2".to_owned())));
+
+        let mut map = BTreeMap::new();
+        map.insert(3, "a".to_owned());
+        map.insert(5, "b".to_owned());
+        map.insert(8, "c".to_owned());
+        // key, value typed with &
+        for (key, value) in map.range((Included(&4), Included(&8))) {
+            // println!("{}: {}", key, value);
+        }
+
+        for (key, value) in map.range_mut((Included(&4), Included(&8))) {
+            // *key = 1; key is always immutable. 
+            *value = "asdf".to_owned();
+            // println!("{}: {}", key, value);
+        }
+
+        // Fast Init
+        let a: HashSet<i32> = [1, 2, 3].iter().cloned().collect();
+        let b: HashSet<i32> = [4, 2, 3, 4].iter().cloned().collect();
+
+        // Can be seen as `a - b`.
+        // x typed as &
+        for x in a.difference(&b) {
+            // println!("{}", x); // Print 1
+        }
+
+        let diff: HashSet<i32> = a.difference(&b).cloned().collect();
+        assert_eq!(diff, [1].iter().cloned().collect());
+
+        // Note that difference is not symmetric,
+        // and `b - a` means something else:
+        // no cloned to get a set of reference.
+        let diff: HashSet<&i32> = b.difference(&a).collect();
+        assert_eq!(diff, [4].iter().collect());
+
+        let intersection: HashSet<i32> = a.intersection(&b).cloned().collect();
+        assert_eq!(intersection, [2,3].iter().cloned().collect());
+
+        let union: HashSet<i32> = a.union(&b).cloned().collect();
+        assert_eq!(union, [1,2,3,4].iter().cloned().collect());
+        assert!(!a.is_subset(&b));
+        assert!(!a.is_superset(&b));
+
+    }
+
+    pub fn hashset_misc() {
+        use std::collections::HashSet;
+        // Type inference lets us omit an explicit type signature (which
+        // would be `HashSet<String>` in this example).
+        let mut books = HashSet::new();
+
+        // Add some books.
+        books.insert("A Dance With Dragons".to_string());
+        books.insert("To Kill a Mockingbird".to_string());
+        books.insert("The Odyssey".to_string());
+        books.insert("The Great Gatsby".to_string());
+
+        // Check for a specific one.
+        assert!(!books.contains("The Winds of Winter"));
+
+        // Remove a book.
+        assert!(books.remove("The Odyssey"));
+        assert!(!books.remove("The Odyssey"));
+
+        // book typed with &String
+        for book in books.iter() {
+            // println!("{}", book);
+        }
+   }
+
+    pub fn orderedset_misc() {
+        use std::collections::BTreeSet;
+        use std::ops::Bound::Included;
+
+        let mut set = BTreeSet::new();
+        set.insert(3);
+        set.insert(8);
+        set.insert(5);
+        // elem typed with &
+        for elem in set.range((Included(&4), Included(&8))) {
+            // println!("{}", elem);
+        }
+        assert_eq!(Some(&5), set.range(4..).next());
+        // first and last
+        assert_eq!(set.iter().next(), Some(&3));
+        assert_eq!(set.iter().next_back(), Some(&8));
+    }
+}
+struct Util(i32, i32);
+impl Util {
+    pub fn option() {
+        let mut op : Option<i32> = None;
+        op = Some(1);
+        let op_ref : Option<&i32> = op.as_ref();
+        let op_mref : Option<&mut i32> = op.as_mut();
+        let op1 : Option<i32> = op.take(); // now op is None
+    }
+
+    pub fn input() {
+        let mut guess = String::new();
+
+        std::io::stdin()
+            .read_line(&mut guess)
+            .expect("Failed to read line");
+    }
+
+    pub fn unnamed_struct() {
+        let mut u : Util = Util(1,2);
+        assert_eq!(u.0, 1);
+        assert_eq!(u.1, 2);
+        u.0 = 3;
+    }
+
+    pub fn pair() {
+        let p : (i32, i32) = (2,3);
+        assert_eq!(p.0, 1);
+        assert_eq!(p.1, 2);
+    }
+}
+
+use crate::util::linked_list::{ListNode, to_list};
+struct ListUtil{}
+impl ListUtil {
+    // traversal
+    pub fn list_size(head: Option<Box<ListNode>>) -> usize {
+        let mut node : &Option<Box<ListNode>> = &head;
+        let mut l = 0usize;
+        while node.is_some() {
+            node = &node.as_ref().unwrap().next;
+            l+=1;
+        }
+        l
+    }
+
+    // Manipulate by list heads. assume l1.size - l2.size <=1 
+    pub fn take_turn_merge(l1: Option<Box<ListNode>>,l2: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+        match((l1,l2)) {
+            (Some(mut l1_node), Some(mut l2_node))=>{
+                l1_node.next = Self::take_turn_merge(Some(l2_node), l1_node.next);
+                Some(l1_node)
+            },
+            (Some(l1_node), None)=>{ Some(l1_node) }, 
+            (None, None)=>{ None}
+            (None, Some(l2_node))=>{panic!("Impossible...")}
+        }
+    }
+
+    // Manipulate by list heads.
+    pub fn reverse_list(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+        let mut reversed = None;
+        let mut unreversed = head;
+        while let Some(mut unreversed_node) = unreversed {
+            unreversed = unreversed_node.next;
+            unreversed_node.next = reversed;
+            reversed = Some(unreversed_node);
+        }
+
+        reversed
+    }
+
+    // Manipulate by mutable references
+    pub fn remove_1st(node: &mut Option<Box<ListNode>>) {
+        //Since mutable references can not move a variable completely or partially, we have to use take() to retrieve the next node, while leaving Null the original next field. 
+        node.as_mut().unwrap().next = node.as_mut().unwrap().next.as_mut().unwrap().next.take();
     }
 }
 
@@ -417,84 +826,102 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_0() {
+    fn test_list() {
+        assert_eq!(ListUtil::list_size(linked![1, 2, 3, 4, 5]), 5);
+        assert_eq!(ListUtil::take_turn_merge(linked![1, 3, 5], linked![2, 4]), linked![1, 2, 3, 4, 5]);
+        assert_eq!(ListUtil::take_turn_merge(linked![1, 3, 5], linked![2, 4, 6]), linked![1, 2, 3, 4, 5, 6]);
+        assert_eq!( ListUtil::reverse_list(linked![1, 2, 3, 4, 5]), linked![5, 4, 3, 2, 1]);
+        let mut l = linked![1, 2, 3, 4, 5];
+        ListUtil::remove_1st(&mut l);
+        assert_eq!(l, linked![1,3,4,5]);
+    }
 
-        assert_eq!(Solution::largest_power(9), 8);
-        // assert_eq!(Solution::zero_right_digits(7, 1), 6);
-        // assert_eq!(Solution::zero_right_digits(8, 2), 8);
-        // assert_eq!(Solution::zero_right_digits(-3, 2), -4);
+    #[test]
+    fn test_bitop() {
 
-        // assert_eq!(Solution::nth_digit(-3, 0), 1);
-        // assert_eq!(Solution::nth_digit(-3, 1), 0);
+        assert_eq!(BitOp::largest_power(9), 8);
+        assert_eq!(BitOp::zero_right_digits(7, 1), 6);
+        assert_eq!(BitOp::zero_right_digits(8, 2), 8);
+        assert_eq!(BitOp::zero_right_digits(-3, 2), -4);
 
-        // assert_eq!(Solution::nth_digit_power(-3, 1), 0);
-        // assert_eq!(Solution::nth_digit_power(5, 2), 4);
+        assert_eq!(BitOp::nth_digit(-3, 0), 1);
+        assert_eq!(BitOp::nth_digit(-3, 1), 0);
 
-        // assert_eq!(Solution::set_nth_digit_zero(5, 2), 1);
-        // assert_eq!(Solution::set_nth_digit_one(5, 1), 7);
+        assert_eq!(BitOp::nth_digit_power(-3, 1), 0);
+        assert_eq!(BitOp::nth_digit_power(5, 2), 4);
 
-        // assert_eq!(Solution::set_zero_from_nth(5, 1), 1);
-        // assert_eq!(Solution::set_zero_from_nth(5, 3), 5);
-        // assert_eq!(Solution::set_zero_from_nth(-3, 3), 5);
-        // assert_eq!(Solution::set_zero_from_nth(-3, 4), 13);
+        assert_eq!(BitOp::set_nth_digit_zero(5, 2), 1);
+        assert_eq!(BitOp::set_nth_digit_one(5, 1), 7);
 
-        // assert_eq!(Solution::set_zero_to_nth(5, 0), 4);
-        // assert_eq!(Solution::set_zero_to_nth(5, 3), 0);
+        assert_eq!(BitOp::set_zero_from_nth(5, 1), 1);
+        assert_eq!(BitOp::set_zero_from_nth(5, 3), 5);
+        assert_eq!(BitOp::set_zero_from_nth(-3, 3), 5);
+        assert_eq!(BitOp::set_zero_from_nth(-3, 4), 13);
 
-        // assert_eq!(Solution::set_zero_to_nth(-3, 2), -8);
-        // assert_eq!(Solution::set_lsb1_zero(5), 4);
-        // assert_eq!(Solution::set_lsb1_zero(6), 4);
+        assert_eq!(BitOp::set_zero_to_nth(5, 0), 4);
+        assert_eq!(BitOp::set_zero_to_nth(5, 3), 0);
 
-        // assert_eq!(Solution::lsb1_power(6), 2);
-        // assert_eq!(Solution::lsb1_power(7), 1);
-        // assert_eq!(Solution::lsb1_power(8), 8);
+        assert_eq!(BitOp::set_zero_to_nth(-3, 2), -8);
+        assert_eq!(BitOp::set_lsb1_zero(5), 4);
+        assert_eq!(BitOp::set_lsb1_zero(6), 4);
 
-        // let mut r = vec![12,11,13,5,6,7];
-        // Solution::heap_sort(&mut r);
-        // assert_eq!(r, vec![5,6,7,11,12,13]);
-        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],0), -1);
-        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],1), 0);
-        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],2), -1);
-        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],3), 2);
-        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],5), 4);
-        // assert_eq!(Solution::first_equal(vec![1,1,3,3,5,5],7), -1);
+        assert_eq!(BitOp::lsb1_power(6), 2);
+        assert_eq!(BitOp::lsb1_power(7), 1);
+        assert_eq!(BitOp::lsb1_power(8), 8);
+    }
+    #[test]
+    fn test_heap() {
 
-        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],0), -1);
-        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],1), 1);
-        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],2), -1);
-        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],3), 3);
-        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],5), 5);
-        // assert_eq!(Solution::last_equal(vec![1,1,3,3,5,5],7), -1);
+        let mut r = vec![12,11,13,5,6,7];
+        Heap::heap_sort(&mut r);
+        assert_eq!(r, vec![5,6,7,11,12,13]);
+    }
 
-        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],0), 0);
-        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],1), 2);
-        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],2), 2);
-        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],3), 4);
-        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],5), -1);
-        // assert_eq!(Solution::first_gt(vec![1,1,3,3,5,5],7), -1);
+    #[test]
+    fn test_binarysearch() {
+        assert_eq!(BinarySearch::first_equal(vec![1,1,3,3,5,5],0), -1);
+        assert_eq!(BinarySearch::first_equal(vec![1,1,3,3,5,5],1), 0);
+        assert_eq!(BinarySearch::first_equal(vec![1,1,3,3,5,5],2), -1);
+        assert_eq!(BinarySearch::first_equal(vec![1,1,3,3,5,5],3), 2);
+        assert_eq!(BinarySearch::first_equal(vec![1,1,3,3,5,5],5), 4);
+        assert_eq!(BinarySearch::first_equal(vec![1,1,3,3,5,5],7), -1);
 
-        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],0), 0);
-        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],1), 0);
-        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],2), 2);
-        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],3), 2);
-        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],5), 4);
-        // assert_eq!(Solution::first_ge(vec![1,1,3,3,5,5],7), -1);
+        assert_eq!(BinarySearch::last_equal(vec![1,1,3,3,5,5],0), -1);
+        assert_eq!(BinarySearch::last_equal(vec![1,1,3,3,5,5],1), 1);
+        assert_eq!(BinarySearch::last_equal(vec![1,1,3,3,5,5],2), -1);
+        assert_eq!(BinarySearch::last_equal(vec![1,1,3,3,5,5],3), 3);
+        assert_eq!(BinarySearch::last_equal(vec![1,1,3,3,5,5],5), 5);
+        assert_eq!(BinarySearch::last_equal(vec![1,1,3,3,5,5],7), -1);
 
-        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],0), -1);
-        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],1), -1);
-        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],2), 1);
-        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],3), 1);
-        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],5), 3);
-        // assert_eq!(Solution::last_lt(vec![1,1,3,3,5,5],7), 5);
+        assert_eq!(BinarySearch::first_gt(vec![1,1,3,3,5,5],2), 2);
+        assert_eq!(BinarySearch::first_gt(vec![1,1,3,3,5,5],3), 4);
+        assert_eq!(BinarySearch::first_gt(vec![1,1,3,3,5,5],5), -1);
+        assert_eq!(BinarySearch::first_gt(vec![1,1,3,3,5,5],7), -1);
 
-        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],0), -1);
-        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],1), 1);
-        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],2), 1);
-        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],3), 3);
-        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],5), 5);
-        // assert_eq!(Solution::last_le(vec![1,1,3,3,5,5],7), 5);
+        assert_eq!(BinarySearch::first_ge(vec![1,1,3,3,5,5],0), 0);
+        assert_eq!(BinarySearch::first_ge(vec![1,1,3,3,5,5],1), 0);
+        assert_eq!(BinarySearch::first_ge(vec![1,1,3,3,5,5],2), 2);
+        assert_eq!(BinarySearch::first_ge(vec![1,1,3,3,5,5],3), 2);
+        assert_eq!(BinarySearch::first_ge(vec![1,1,3,3,5,5],5), 4);
+        assert_eq!(BinarySearch::first_ge(vec![1,1,3,3,5,5],7), -1);
 
+        assert_eq!(BinarySearch::last_lt(vec![1,1,3,3,5,5],0), -1);
+        assert_eq!(BinarySearch::last_lt(vec![1,1,3,3,5,5],1), -1);
+        assert_eq!(BinarySearch::last_lt(vec![1,1,3,3,5,5],2), 1);
+        assert_eq!(BinarySearch::last_lt(vec![1,1,3,3,5,5],3), 1);
+        assert_eq!(BinarySearch::last_lt(vec![1,1,3,3,5,5],5), 3);
+        assert_eq!(BinarySearch::last_lt(vec![1,1,3,3,5,5],7), 5);
 
+        assert_eq!(BinarySearch::last_le(vec![1,1,3,3,5,5],0), -1);
+        assert_eq!(BinarySearch::last_le(vec![1,1,3,3,5,5],1), 1);
+        assert_eq!(BinarySearch::last_le(vec![1,1,3,3,5,5],2), 1);
+        assert_eq!(BinarySearch::last_le(vec![1,1,3,3,5,5],3), 3);
+        assert_eq!(BinarySearch::last_le(vec![1,1,3,3,5,5],5), 5);
+        assert_eq!(BinarySearch::last_le(vec![1,1,3,3,5,5],7), 5);
+    }
+
+    #[test]
+    fn test_unionfind() {
         let mut elements = HashSet::new();
         let e0 = "0".to_owned();
         let e1 = "1".to_owned();
@@ -656,7 +1083,17 @@ mod tests {
         assert_eq!(uf.find_root(0), 3);
         assert_eq!(uf.find_root(2), 3);
         assert_eq!(uf.find_root(4), 3);
+    }
 
+    #[test]
+    fn test_utils() {
+        MapUtil::hashmap_misc();
+        MapUtil::orderedmap_misc();
+        MapUtil::hashset_misc();
+        MapUtil::orderedset_misc();
+        VecUtil::iterator_misc();
+        VecUtil::misc();
 
     }
+
 }
