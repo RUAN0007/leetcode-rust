@@ -54,37 +54,29 @@ use crate::util::tree::{TreeNode, to_tree};
 use std::rc::Rc;
 use std::cell::RefCell;
 impl Solution {
-    pub fn helper(nums: &[i32], size: usize) -> Option<Rc<RefCell<TreeNode>>> {
+    pub fn vec2bst_helper(nums : &[i32], size: i32) -> Option<Rc<RefCell<TreeNode>>> {
+     if size <= 0 {
+         None
+     } else {
+         // biase to left half so that mid will not overflow. 
+         let mid = size / 2;
+         let left_size = mid;
+         let right_size = size - 1 - mid;
+         let node = Rc::new(RefCell::new(TreeNode::new(nums[mid as usize])));
+         if 0 < mid {
+             node.borrow_mut().left = Self::vec2bst_helper(&nums[0..(mid as usize)], left_size);
+         }
 
-        if size == 0 {
-            return None;
-        } 
+         if mid+1 < size {
+             node.borrow_mut().right = Self::vec2bst_helper(&nums[(mid+1) as usize..], right_size);
+         }
+         Some(node)
+     }
+ }
 
-        let node = Some(Rc::new(RefCell::new(TreeNode::new(nums[size/2]))));
-        if size == 1 {
-            return node;
-        } 
-
-        // if 2 < size, must have a left tree
-        let right_start = size/2+1;
-        let left_count = right_start - 1;
-        let left_nums = &nums[0..right_start-1];
-
-        let left = Self::helper(left_nums, left_count);
-        node.as_ref().unwrap().borrow_mut().left = left;
-
-        if 2 < size {
-            let right_nums = &nums[right_start..];
-            let right_count = size - left_count - 1;
-            let right = Self::helper(right_nums, right_count);
-            node.as_ref().unwrap().borrow_mut().right = right;
-        }
-        return node;
-    }
-
-    pub fn sorted_array_to_bst(nums: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
-        return Self::helper(&nums[..], nums.len());
-    }
+ pub fn sorted_array_to_bst(nums: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
+     return Self::vec2bst_helper(&nums[..], nums.len() as i32);
+ }
 }
 
 // submission codes end

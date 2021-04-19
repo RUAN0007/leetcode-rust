@@ -546,6 +546,100 @@ impl StrUtil {
     }
 }
 
+struct TreeUtil {}
+use std::rc::Rc;
+use std::cell::RefCell;
+use std::collections::VecDeque;
+use crate::util::tree::{TreeNode, to_tree};
+
+impl TreeUtil {
+    pub fn bfs(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+        let mut traversed : Vec<i32> = vec![];
+        if let Some(ref root_node) = root {
+            type NodeWithLevel = (Rc<RefCell<TreeNode>>, usize);
+            let mut queue : VecDeque<NodeWithLevel> = VecDeque::new();
+            queue.push_back((Rc::clone(root_node), 1));
+
+            while let Some(head_entry) = queue.pop_front() { 
+                let cur_node : Rc<RefCell<TreeNode>> = head_entry.0;
+                let cur_level : usize = head_entry.1;
+                traversed.push(cur_node.borrow().val);
+                // left_node typed with &Rc<RefCell<TreeNode>>
+                if let Some(left_node) = cur_node.borrow().left.as_ref() {
+                    queue.push_back((Rc::clone(left_node), cur_level+1));
+                };
+
+                // right_node typed with &Rc<RefCell<TreeNode>>
+                if let Some(right_node) = cur_node.borrow().right.as_ref() {
+                    queue.push_back((Rc::clone(right_node), cur_level+1));
+                };
+            }
+        }
+
+        traversed
+    }
+
+    pub fn preorder(root: &Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+        if root.is_some() {
+            let mut r = vec![root.as_ref().unwrap().borrow().val];
+            r.extend(Self::preorder(&root.as_ref().unwrap().borrow().left));
+            r.extend(Self::preorder(&root.as_ref().unwrap().borrow().right));
+            r
+        } else {
+            vec![]
+        }
+    }
+
+    pub fn inorder(root: &Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+        if root.is_some() {
+            let mut r = vec![];
+            r.extend(Self::preorder(&root.as_ref().unwrap().borrow().left));
+            r.push(root.as_ref().unwrap().borrow().val);
+            r.extend(Self::preorder(&root.as_ref().unwrap().borrow().right));
+            r
+        } else {
+            vec![]
+        }
+    }
+
+    pub fn postorder(root: &Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+        if root.is_some() {
+            let mut r = vec![];
+            r.extend(Self::preorder(&root.as_ref().unwrap().borrow().left));
+            r.extend(Self::preorder(&root.as_ref().unwrap().borrow().right));
+            r.push(root.as_ref().unwrap().borrow().val);
+            r
+        } else {
+            vec![]
+        }
+    }
+
+    pub fn vec2bst_helper(nums : &[i32], size: i32) -> Option<Rc<RefCell<TreeNode>>> {
+        if size <= 0 {
+            None
+        } else {
+            // biase to left half so that mid will not overflow. 
+            let mid = size / 2;
+            let left_size = mid;
+            let right_size = size - 1 - mid;
+            let node = Rc::new(RefCell::new(TreeNode::new(nums[mid as usize])));
+            if 0 < mid {
+                node.borrow_mut().left = Self::vec2bst_helper(&nums[0..(mid as usize)], left_size);
+            }
+
+            if mid+1 < size {
+                node.borrow_mut().right = Self::vec2bst_helper(&nums[(mid+1) as usize..], right_size);
+            }
+            Some(node)
+        }
+    }
+
+    pub fn vec2bst(nums : Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
+        Self::vec2bst_helper(&nums[..], nums.len() as i32)
+    }
+}
+
+
 struct VecUtil{} 
 impl VecUtil {
     pub fn sort(v : &mut Vec<i32>) {
@@ -930,6 +1024,16 @@ impl ListUtil {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn test_tree() {
+        assert_eq!(TreeUtil::bfs(tree![1, 2, 2, 3, 4, 4, 3]), vec![1, 2, 2, 3, 4, 4, 3]);
+
+        assert_eq!(TreeUtil::bfs(tree![1, 2, 2, null, 3, null, 3]), vec![1, 2, 2, 3, 3]);
+
+        assert_eq!(TreeUtil::preorder(&tree![1, 2, 3, 4, null, null, 6]), vec![1, 2, 4, 3, 6]);
+        assert_eq!(TreeUtil::inorder(&tree![1, 2, 3, 4, null, null, 6]), vec![4, 2, 1, 3, 6]);
+        assert_eq!(TreeUtil::postorder(&tree![1, 2, 3, 4, null, null, 6]), vec![6, 3, 1, 2, 4]);
+    }
 
     #[test]
     fn test_list() {
@@ -1235,14 +1339,13 @@ mod tests {
     }
 
     #[test]
-    fn test_utils() {
+    fn test_utils(a : String) {
         MapUtil::hashmap_misc();
         MapUtil::orderedmap_misc();
         MapUtil::hashset_misc();
         MapUtil::orderedset_misc();
         VecUtil::iterator_misc();
         VecUtil::misc();
-
     }
 
 }
