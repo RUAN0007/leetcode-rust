@@ -289,42 +289,148 @@ impl BinarySearch {
         -1
     }
 }
-struct Heap{} 
-impl Heap{
-    pub fn max_heapify(nums: &mut Vec<i32>, max_len: usize, start_pos: usize) {
+
+// Use vector to represent a heap so that any element can be randomly accessed, but the element count must be fixed. 
+use  std::cmp::Ordering;
+#[derive(Debug)]
+struct VecHeap<K: Clone + Hash + Eq, W:Ord + Clone, V: Clone>{
+    elements: Vec<(K,W,V)>,
+    key2idx: HashMap<K, usize>,
+} 
+
+impl<K: Clone + Hash + Eq, W:Ord + Clone, V: Clone> VecHeap<K,W,V>{
+
+    pub fn new(keys: Vec<K>, weights : Vec<W>, values : Vec<V>) -> VecHeap<K,W,V> {
+        let mut vh = VecHeap{elements: vec![], key2idx: HashMap::new()};
+        let n = keys.len();
+        for i in 0..keys.len() {
+            let idx = vh.elements.len();
+            vh.key2idx.insert(keys[i].clone(), idx);
+            vh.elements.push((keys[i].clone(), weights[i].clone(), values[i].clone()));
+        }
+
+        for i in (0..(n/2)).rev() {
+            vh.topdown_heapify(i, n);
+        }
+
+        vh
+    }
+
+    pub fn reweight_with_default(&mut self, key: &K, weight: &W, default_value: V) -> bool {
+        if let Some((k,w,v)) = self.remove(key) {
+            self.insert(k, weight.clone(),v);
+            true
+        } else {
+            self.insert(key.clone(), weight.clone(),default_value);
+            false
+        }
+    }
+
+    pub fn reweight(&mut self, key: &K, weight: &W) -> bool {
+        if let Some((k,w,v)) = self.remove(key) {
+            self.insert(k, weight.clone(),v);
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn remove(&mut self, key : &K) -> Option<(K,W,V)> {
+        if let Some(&removed_pos) = self.key2idx.get(key) {
+            // swap the removed element with the last element. 
+            self.key2idx.remove(key);
+            if removed_pos == self.elements.len() - 1 {
+                self.elements.pop()
+            } else  {
+                //swap the removed element wit the last. 
+                let removed = self.elements[removed_pos].clone();
+                let last_entry = self.elements.pop().unwrap();
+                self.key2idx.insert(last_entry.0.clone(), removed_pos);
+                self.elements[removed_pos] = last_entry;
+
+                // topdown_heapify from the removed pos
+                self.topdown_heapify(removed_pos, self.len());
+                Some(removed)
+            }
+
+        } else {
+            None
+        }
+    }
+
+    pub fn insert(&mut self, key: K, weight: W, value: V) {
+        let last_pos = self.elements.len();
+        self.key2idx.insert(key.clone(), last_pos);
+        self.elements.push((key, weight, value));
+        self.bottomup_heapify(last_pos)
+    }
+
+    pub fn bottomup_heapify(&mut self, start_pos : usize) {
+        if 0 < start_pos  {
+            let parent_pos = (start_pos + 1) / 2 - 1;
+            if self.elements[parent_pos].1.cmp(&self.elements[start_pos].1) == Ordering::Less {
+                self.elements.swap(parent_pos, start_pos);
+                self.key2idx.insert(self.elements[start_pos].0.clone(), start_pos);
+                self.key2idx.insert(self.elements[parent_pos].0.clone(), parent_pos);
+                self.bottomup_heapify(parent_pos);
+            }
+        }
+    }
+    
+    pub fn topdown_heapify(&mut self, start_pos: usize, max_len: usize ) {
         let left_pos = 2 * start_pos + 1;
         let right_pos = 2 * (start_pos + 1);
 
         let mut large_pos = None;
-        let mut large_val = nums[start_pos];
-        if left_pos < max_len && large_val < nums[left_pos] {
-            large_val = nums[left_pos];
+        let mut large_weight = self.elements[start_pos].1.clone();
+        if left_pos < max_len && large_weight.cmp(&self.elements[left_pos].1) == Ordering::Less {
+            large_weight = self.elements[left_pos].1.clone();
             large_pos = Some(left_pos);
         }
 
-        if right_pos < max_len && large_val < nums[right_pos] {
-            large_val = nums[right_pos];
+        if right_pos < max_len && large_weight.cmp(&self.elements[right_pos].1) == Ordering::Less {
+            large_weight = self.elements[right_pos].1.clone();
             large_pos = Some(right_pos);
         }
 
         if let Some(large_pos) = large_pos {
-            nums.swap(start_pos, large_pos);
-            Self::max_heapify(nums, max_len, large_pos);
+            self.elements.swap(start_pos, large_pos);
+            self.key2idx.insert(self.elements[start_pos].0.clone(), start_pos);
+            self.key2idx.insert(self.elements[large_pos].0.clone(), large_pos);
+
+            self.topdown_heapify(large_pos, max_len);
         }
     }
 
-    pub fn heap_sort(nums: &mut Vec<i32>) {
-        let n = nums.len();
-        for i in (0..(n/2)).rev() {
-            Self::max_heapify(nums, nums.len() , i);
-        }
+    pub fn max(&self) -> Option<&(K,W,V)> {
+        self.elements.get(0)
+    }
 
-        for i in (0..n).rev() {
-            nums.swap(0, i);
-            Self::max_heapify(nums, i, 0);
-        }
+    pub fn len(&self) -> usize {
+        self.elements.len()
+    }
+
+}
+
+use core::fmt::Debug;
+pub fn heap_sort<T: Clone + Hash + Ord + Debug> (nums: &mut Vec<T>) {
+    let n = nums.len();
+    let mut vh = VecHeap::new(nums.clone(), 
+    nums.clone(), nums.clone());
+    // println!("vh.elements={:?}", vh.elements);
+    // println!("vh.key2idx={:?}", vh.key2idx);
+
+    for i in (0..n).rev() {
+        vh.elements.swap(0, i);
+        vh.topdown_heapify(0, i);
+    }
+    nums.clear();
+    for entry in vh.elements {
+        nums.push(entry.0);
     }
 }
+
+
 struct BitOp{} 
 impl BitOp {
     pub fn zero_right_digits(x : i32, digit_count: usize) -> i32 {
@@ -873,8 +979,51 @@ mod tests {
     fn test_heap() {
 
         let mut r = vec![12,11,13,5,6,7];
-        Heap::heap_sort(&mut r);
+        heap_sort(&mut r);
         assert_eq!(r, vec![5,6,7,11,12,13]);
+
+        let k1 = String::from("k1");
+        let k2 = String::from("k2");
+        let k3 = String::from("k3");
+        let k4 = String::from("k4");
+
+        let mut vh = VecHeap::new(vec
+            ![k1.clone(),k2.clone(),k3.clone(),k4.clone()], 
+            vec![1,2,3,4], 
+            vec![k1.clone(),k2.clone(),k3.clone(),k4.clone()]);
+        
+
+        assert_eq!(vh.max(), Some(&(k4.clone(), 4, k4.clone())));
+        assert_eq!(vh.len(), 4);
+
+        assert_eq!(vh.remove(&k3), Some((k3.clone(), 3, k3.clone())));
+        assert_eq!(vh.len(), 3);
+        assert_eq!(vh.max(), Some(&(k4.clone(), 4, k4.clone())));
+
+        assert_eq!(vh.remove(&k4), Some((k4.clone(), 4, k4.clone())));
+        assert_eq!(vh.len(), 2);
+        assert_eq!(vh.max(), Some(&(k2.clone(), 2, k2.clone())));
+
+        let k5 = String::from("k5");
+        vh.insert(k5.clone(), 5, k5.clone());
+        assert_eq!(vh.max(), Some(&(k5.clone(), 5, k5.clone())));
+        assert_eq!(vh.len(), 3);
+
+        assert!(vh.reweight(&k1, &10));
+        assert_eq!(vh.max(), Some(&(k1.clone(), 10, k1.clone())));
+        assert_eq!(vh.len(), 3);
+
+        assert_eq!(vh.remove(&k5), Some((k5.clone(), 5, k5.clone())));
+        assert_eq!(vh.remove(&k4), None);
+        assert_eq!(vh.remove(&k3), None);
+        assert_eq!(vh.remove(&k2), Some((k2.clone(), 2, k2.clone())));
+        assert_eq!(vh.remove(&k1), Some((k1.clone(), 10, k1.clone())));
+        assert_eq!(vh.len(), 0);
+
+        assert!(!vh.reweight(&k1, &10));
+        assert!(!vh.reweight_with_default(&k5, &5, k5.clone()));
+        assert_eq!(vh.max(), Some(&(k5.clone(), 5, k5.clone())));
+        assert_eq!(vh.len(), 1);
     }
 
     #[test]
