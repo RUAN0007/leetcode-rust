@@ -29,7 +29,19 @@
 ### Hard
 * [99. Recover Binary Search Tree](src/problem/p0099_recover_binary_search_tree.rs)
 
-# Recursions
+## Stack
+### Parsing
+* [726. Number of Atoms](src/problem/p0726_number_of_atoms.rs)
+During iteration, think when to update parameters, when to process these parameters and re-reinitialize them, and when to invoke recursively. Note to match parentheses when subtracting subparts for the recursive call. 
+### Stack-aided Monotonic Array
+Extremely powerful for leftmost/rightmost smaller/greater problems in an array.
+* [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs)
+* [907. Sum of Subarray Minimums](src/problem/p0907_sum_of_subarray_minimums.rs)
+### Hard
+* [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs)
+
+
+## Recursions
 
 # Combination and Permutation
 ##
@@ -40,6 +52,8 @@
 ## Infinite Knapsack
 ## Classics
 
+## Other Hard
+* [42. Trapping Rain Water](src/problem/p0042_trapping_rain_water.rs)
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
     * BtreeMap
@@ -66,7 +80,8 @@ Promient Problems
 399 str Union Find
 
 Unsolved:
-803
+[803. Bricks Falling When Hit](src/problem/p0803_bricks_falling_when_hit.rs)
+[126. Word Ladder II](src/problem/p0126_word_ladder_ii.rs)
 
 # Resources
 

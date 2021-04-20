@@ -158,3 +158,7 @@ mod p0095_unique_binary_search_trees_ii;
 mod p0111_minimum_depth_of_binary_tree;
 mod p0112_path_sum;
 mod p0099_recover_binary_search_tree;
+mod p0084_largest_rectangle_in_histogram;
+mod p0042_trapping_rain_water;
+mod p0726_number_of_atoms;
+mod p0127_word_ladder;

@@ -38,31 +38,49 @@ struct Pair(i32,  // num
 impl Solution {
 
     pub fn sum_subarray_mins(mut arr: Vec<i32>) -> i32 {
-        let mut stack : Vec<Pair> = vec![]; 
-        arr.reverse();
-        let mut sum = 0i32;
-        // stack with decreasing num
-        for num in arr {
-            let mut count = 1i32;
-            while let Some(last) = stack.last() {
-                let Pair(last_num, last_count, _) = *last;
-                if num <= last_num {
+        let n = arr.len();
+        let modular : i32 = 1000000000 + 7;
+        let mut stack = vec![];
+        let mut left_nearest_lt_idx = vec![0i32; n];
+        for i in 0..n {
+            while let Some(&last_idx) = stack.last() {
+                if !(arr[last_idx] < arr[i]) {
                     stack.pop();
-                    count +=last_count;
                 } else {
                     break;
                 }
+            } 
+            
+            if let Some(&last_idx) = stack.last() {
+                left_nearest_lt_idx[i] = last_idx as i32;
+            } else {
+                left_nearest_lt_idx[i] = -1i32;
             }
-            let mut last_sum = 0i32;
-            if let Some(last) = stack.last() {
-                let Pair(_, _, this_last_sum) = *last;
-                last_sum = this_last_sum;
-            }
+            stack.push(i);
+        }
 
-            let this_sum = (last_sum + num * count)  % (1000000000 + 7);
-            sum = (sum + this_sum) % (1000000000 + 7);
-            stack.push(Pair(num, count, this_sum));
-            // println!("Stack: {:?}", stack);
+        stack.clear();
+        let mut right_nearest_le_idx = vec![0i32; n];
+        for i in (0..n).rev() {
+            while let Some(&last_idx) = stack.last() {
+                if !(arr[last_idx] <= arr[i])  {
+                    stack.pop();
+                } else {
+                    break;
+                }
+            } 
+            
+            if let Some(&last_idx) = stack.last() {
+                right_nearest_le_idx[i] = last_idx as i32;
+            } else {
+                right_nearest_le_idx[i] = n as i32;
+            }
+            stack.push(i);
+        }
+
+        let mut sum = 0i32;
+        for i in (0..n) {
+            sum = (sum + arr[i] * (i as i32- left_nearest_lt_idx[i]) * (right_nearest_le_idx[i] - i as i32)) % modular;
         }
         sum
     }

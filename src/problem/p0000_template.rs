@@ -9,6 +9,30 @@ use std::collections::BTreeMap;
 use std::collections::HashSet;
 
 
+pub fn left_rightmost_smaller_idx(nums: Vec<i32>) -> Vec<i32> {
+    let n = nums.len();
+
+    let mut left_rightmost_smaller_idx = vec![-1i32;n];
+    let mut stack : Vec<usize> = vec![];
+    for (i, &num) in nums.iter().enumerate() {
+        while let Some(&last_idx) = stack.last() {
+            if !(nums[last_idx] < num) {
+                stack.pop();
+            } else {
+                break;
+            }
+        }
+
+        if let Some(&last_idx) = stack.last() {
+            left_rightmost_smaller_idx[i] = last_idx as i32;
+        } else {
+            left_rightmost_smaller_idx[i] = -1;
+        }
+        stack.push(i);
+    }
+    left_rightmost_smaller_idx
+}
+
 struct UnionFindInt {
     parents: Vec<usize>,
     subset_sizes: Vec<usize>,
@@ -1339,7 +1363,7 @@ mod tests {
     }
 
     #[test]
-    fn test_utils(a : String) {
+    fn test_utils() {
         MapUtil::hashmap_misc();
         MapUtil::orderedmap_misc();
         MapUtil::hashset_misc();

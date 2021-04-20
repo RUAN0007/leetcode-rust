@@ -1,4 +1,3 @@
-use std::collections::{HashMap, VecDeque};
 
 /**
  * [126] Word Ladder II
@@ -46,61 +45,50 @@ pub struct Solution {}
 
 // The current traversed path in vector, 
 // The index of the flipped char in map. 
-type Path = Vec<String>; 
+use std::collections::HashSet;
+use std::collections::{HashMap, VecDeque};
+// TODO:timeout
 impl Solution {
-    pub fn diff_by_one(word_a : &String, word_b : &String) -> Option<usize> {
-        let mut diff = None;
-        for (i, char_a) in word_a.chars().enumerate() {
-            if char_a != word_b.chars().nth(i).unwrap() {
-                if let None = diff {
-                    diff = Some(i);
-                } else {
-                    return None; // diff more than 1. 
-                }
-            }
-        }
-        diff
-    }
-    // TODO: timeout 
     pub fn find_ladders(begin_word: String, end_word: String, word_list: Vec<String>) -> Vec<Vec<String>> {
 
-        let mut paths : VecDeque<Path> = VecDeque::new();
-        let mut result = vec![];
-        let mut least_length = usize::MAX;
-        paths.push_back(vec![begin_word]);
-        while let Some(path) = paths.pop_front() {
-            let (mut seq) = path;
-            println!("{:?}", seq);
-            if least_length < seq.len() {
-                // traversed to a longer path than the known, 
-                // stop here as later paths are all longer. 
-                break
+        let mut unvisited : HashSet<String> = word_list.clone().into_iter().collect();
+        let mut visited_queue : VecDeque<Vec<String>> = VecDeque::new();
+        visited_queue.push_back(vec![begin_word.clone()]);
+        let mut min_level : Option<usize> = None;
+        let mut results = vec![];
+        while let Some(cur_path)  = visited_queue.pop_front() {
+            let cur_level = cur_path.len();
+            let last_word = cur_path.last().unwrap().clone();
+            unvisited.remove(&last_word);
+            // println!("cur_level={},last_word={},min_level={:?}, visited_queue.len={}", cur_level, last_word, min_level, visited_queue.len());
+            if min_level.is_some() && cur_level > min_level.unwrap() {
+                return results;
             }
-            let cur_word = seq.last().unwrap().clone();
-            if cur_word == end_word {
-                // spot a valid path
-                least_length = seq.len();
-                result.push(seq);
+            if last_word == end_word {
+                results.push(cur_path);
+                min_level = Some(cur_level);
             } else {
-                // find all words that differ cur_word by 1 char.
-                //   but the differed pos is NOT in visited
-                // Enqueue them. 
-                for word in &word_list {
-                    // let diff_pos = Self::diff_by_one(&cur_word, &word);
-                    // println!("cur_word: {}, word: {}, diff_pos: {:?}", cur_word, word, diff_pos);
+                for i in 0..last_word.len() {
+                    // for &new_char in chars_at_idx[i].iter() {
+                    for c in 0..26 {
+                        let new_char : char = ('a' as u8 + c as u8) as char;
+                        let mut word_chars : Vec<char> = last_word.chars().collect();
+                        word_chars[i] = new_char;
+                        let new_word : String = word_chars.iter().collect();
+                        if unvisited.contains(&new_word) {
+                        // if word_list.contains(&new_word) && cur_path.iter().all(|word|{!word.eq(&new_word)}) {
 
-                    if let Some(diff_pos) = Self::diff_by_one(&cur_word, &word) {
-                        if !seq.iter().any(|seq_word| *seq_word == *word) {
-                            let mut new_seq = seq.clone();
-                            new_seq.push(word.clone());
-                            paths.push_back(new_seq);
+                            let mut new_path = cur_path.clone();
+                            new_path.push(new_word);
+                            visited_queue.push_back(new_path);
                         }
                     }
                 }
-            }
-        }
 
-        result
+            }
+
+        }
+        results
     }
 }
 
