@@ -1,31 +1,43 @@
 /**
- * [131] Palindrome Partitioning
+ * [132] Palindrome Partitioning II
  *
- * Given a string s, partition s such that every substring of the partition is a palindrome. Return all possible palindrome partitioning of s.
- * A palindrome string is a string that reads the same backward as forward.
+ * Given a string s, partition s such that every substring of the partition is a palindrome.
+ * Return the minimum cuts needed for a palindrome partitioning of s.
  *  
  * Example 1:
+ * 
  * Input: s = "aab"
- * Output: [["a","a","b"],["aa","b"]]
+ * Output: 1
+ * Explanation: The palindrome partitioning ["aa","b"] could be produced using 1 cut.
+ * 
  * Example 2:
+ * 
  * Input: s = "a"
- * Output: [["a"]]
+ * Output: 0
+ * 
+ * Example 3:
+ * 
+ * Input: s = "ab"
+ * Output: 1
+ * 
  *  
  * Constraints:
  * 
- * 	1 <= s.length <= 16
- * 	s contains only lowercase English letters.
+ * 	1 <= s.length <= 2000
+ * 	s consists of lower-case English letters only.
  * 
  */
-pub struct Solution {}
+use std::collections::HashSet;
+pub struct Solution {
+}
 
-// problem: https://leetcode.com/problems/palindrome-partitioning/
-// discuss: https://leetcode.com/problems/palindrome-partitioning/discuss/?currentPage=1&orderBy=most_votes&query=
+// problem: https://leetcode.com/problems/palindrome-partitioning-ii/
+// discuss: https://leetcode.com/problems/palindrome-partitioning-ii/discuss/?currentPage=1&orderBy=most_votes&query=
 
 // submission codes start here
 
 impl Solution {
-    pub fn backtrack_helper<P,E,R,B>(result : &mut Vec<Vec<R>>, tmp : &mut Vec<R>, elements : &Vec<E>, predicate: P, parse: B, start : usize, no_dup : bool, element_reusable : bool) where P:Fn(&Vec<R>)->(bool, bool) + Copy, B:Fn(&Vec<E>,usize,usize)->Option<R> + Copy, R:Clone +Eq + std::fmt::Debug, E:std::fmt::Debug{
+    pub fn backtrack_helper<P,E,R,B>(result : &mut Vec<Vec<R>>, tmp : &mut Vec<R>, elements : &Vec<E>, predicate: P, parse: B, start : usize, no_dup : bool, element_reusable : bool) where P:Fn(&Vec<Vec<R>>, &Vec<R>)->(bool, bool) + Copy, B:Fn(&Vec<E>,usize,usize)->Option<R> + Copy, R:Clone +Eq + std::fmt::Debug, E:std::fmt::Debug{
         // is_sorted() is only supported in nightly-built rust
         // if no_dup && !elements.is_sorted() {
         //     panic!("Elements must be presorted to deduplicate.");
@@ -33,7 +45,7 @@ impl Solution {
         if no_dup && element_reusable {
             panic!("element_reusable and no_dup can NOT be both on. ");
         }
-        let (valid , early_stop) = predicate(tmp);
+        let (valid , early_stop) = predicate(result, tmp);
         if valid { result.push(tmp.clone()); }
         if early_stop {return}
 
@@ -65,16 +77,21 @@ impl Solution {
         }
     }
 
-
-
-    pub fn partition(s: String) -> Vec<Vec<String>> {
+    // May timeout
+    pub fn min_cut_recursive(s: String) -> i32 {
         let mut result : Vec<Vec<String>> = vec![];
         let mut tmp : Vec<String> = vec![];
         let element_reusable = false;
         let no_dup = false;
 
-        let predicate = |tmp : &Vec<String>|{
-            let early_stop = false;
+        let predicate = |result: &Vec<Vec<String>>, tmp : &Vec<String>|{
+            let min_cut = result.iter().map(|r|{r.len()}).min();
+            let cur_cut = tmp.len();
+            let mut early_stop = false;
+            if min_cut.is_some() && min_cut.unwrap() <=cur_cut {
+                early_stop = true;
+            }
+
             let mut l = 0usize;
             for t in tmp.iter() {
                 l+=t.len();
@@ -95,7 +112,28 @@ impl Solution {
 
         let elements : Vec<char> = s.chars().collect();
         Self::backtrack_helper(&mut result, &mut tmp, &elements, predicate, parse, 0, no_dup, element_reusable);
-        result
+        (result.iter().map(|r|{r.len()}).min().unwrap() - 1) as i32
+    }
+
+    // with DP
+    pub fn min_cut(s: String) -> i32 {
+        let n = s.len() as i32;
+        let mut min_cuts = vec![n as usize;n as usize]; 
+        let mut is_palindrome = HashSet::new();
+        let s_chars : Vec<char> = s.chars().collect();
+        for end in 0..n {//inclusive
+            for start in 0..=end {
+                if s_chars[start as usize] == s_chars[end as usize] && (start+1>end-1||is_palindrome.contains(&(start+1,end-1))) {
+                    is_palindrome.insert((start, end));
+                    if start == 0 {
+                        min_cuts[end as usize] = 0;
+                    } else {
+                        min_cuts[end as usize] = std::cmp::min(min_cuts[end as usize], 1+min_cuts[start as usize-1]);
+                    }
+                }
+            }
+        }
+        min_cuts[n as usize -1] as i32
     }
 }
 
@@ -106,19 +144,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_131() {
-        assert_eq!(
-            Solution::partition("aab".to_owned()),
-            vec![ vec_string!["a", "a", "b"],vec_string!["aa", "b"],]
-        );
-        assert_eq!(
-            Solution::partition("aaa".to_owned()),
-            vec![
-                vec_string!["a", "a", "a"],
-                vec_string!["a", "aa"],
-                vec_string!["aa", "a"],
-                vec_string!["aaa"],
-            ]
-        );
+    fn test_132() {
+        assert_eq!(Solution::min_cut("aab".to_owned()), 1);
+        assert_eq!(Solution::min_cut("aaa".to_owned()), 0);
+        assert_eq!(Solution::min_cut("aabb".to_owned()), 1);
     }
 }

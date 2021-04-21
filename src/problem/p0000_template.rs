@@ -1043,8 +1043,8 @@ impl ListUtil {
     }
 }
 
-struct PermCompSubsetUtil{} 
-impl PermCompSubsetUtil {
+struct BacktrackUtil{} 
+impl BacktrackUtil {
     pub fn permute(mut elements : Vec<i32>, no_dup : bool ) -> Vec<Vec<i32>> {
         let mut result : Vec<Vec<i32>> = vec![];
         let n = elements.len();
@@ -1072,27 +1072,43 @@ impl PermCompSubsetUtil {
         result
     }
 
-    pub fn recursive_helper<P>(result : &mut Vec<Vec<i32>>, tmp : &mut Vec<i32>, elements : &Vec<i32>, predicate: P, start : usize, no_dup : bool, element_reusable : bool) where P:Fn(&Vec<i32>)->(bool, bool) + Copy {
+    pub fn backtrack_helper<P,E,R,B>(result : &mut Vec<Vec<R>>, tmp : &mut Vec<R>, elements : &Vec<E>, predicate: P, parse: B, start : usize, no_dup : bool, element_reusable : bool) where P:Fn(&Vec<Vec<R>>, &Vec<R>)->(bool, bool) + Copy, B:Fn(&Vec<E>,usize,usize)->Option<R> + Copy, R:Clone +Eq + std::fmt::Debug, E:std::fmt::Debug{
         // is_sorted() is only supported in nightly-built rust
         // if no_dup && !elements.is_sorted() {
         //     panic!("Elements must be presorted to deduplicate.");
         // }
-        let (valid , backtrack) = predicate(tmp);
-        if valid {
-            result.push(tmp.clone());
+        if no_dup && element_reusable {
+            panic!("element_reusable and no_dup can NOT be both on. ");
         }
-        if backtrack {
-            let n : usize = elements.len();
-            for i in start..n {
-                let backtrack : bool = if !no_dup {true} else if i==start{true}else if elements[i-1] != elements[i] {true}else{false};
+        let (valid , early_stop) = predicate(result, tmp);
+        if valid { result.push(tmp.clone()); }
+        if early_stop {return}
 
-                if backtrack {
-                    tmp.push(elements[i]);
-                    let next_start = if element_reusable { i } else { i+1 };
-                    Self::recursive_helper(result, tmp, elements, predicate, next_start, no_dup, element_reusable);
-                    tmp.pop();
-                }
+        let n : usize = elements.len();
+        let mut last_parsed : Option<R> = None;
+        let mut start_parse_idx : usize = start;
+        for i in start..n {
+            let parsed : Option<R> = parse(elements, start, i);
+            // println!("elements={:?}, start_idx={}, end={}, parsed={:?}", elements, start, i, parsed);
+            if parsed.is_none() {
+                continue;
             }
+            let parsed : R = parsed.unwrap();
+
+            let mut backtrack = true;
+            if no_dup && last_parsed.is_some() && last_parsed.as_ref().unwrap().eq(&parsed) { 
+                backtrack = false;
+            }
+
+            if backtrack {
+                tmp.push(parsed.clone());
+                let next_start = if element_reusable { start_parse_idx} else { i+1 };
+                Self::backtrack_helper(result, tmp, elements, predicate, parse, next_start, no_dup, element_reusable);
+                tmp.pop();
+
+            }
+            last_parsed = Some(parsed.clone());
+            start_parse_idx = i + 1;
         }
     }
 
@@ -1102,17 +1118,98 @@ impl PermCompSubsetUtil {
         let element_reusable = false;
         if no_dup {elements.sort()}
 
-        let predicate = |tmp : &Vec<i32>|{
+        let predicate = |result: &Vec<Vec<i32>>, tmp : &Vec<i32>|{
             let mut valid = false;
-            let mut backtrack = false;
-            if tmp.len() < k {
-                backtrack = true;
+            let mut early_stop = false;
+            if tmp.len() > k {
+                early_stop = true;
             } else if tmp.len() == k {
                 valid = true;
             }
-            (valid, backtrack)
+            (valid, early_stop)
         };
-        Self::recursive_helper(&mut result, &mut tmp, &elements, predicate, 0, no_dup, element_reusable);
+
+        // start_idx and end_idx are both inclusive
+        let parse = |elements : &Vec<i32>, start_idx : usize, end_idx : usize|{
+            Some(elements[end_idx])
+        };
+
+        Self::backtrack_helper(&mut result, &mut tmp, &elements, predicate, parse, 0, no_dup, element_reusable);
+        result
+    }
+
+    pub fn subsets(mut nums: Vec<i32>, no_dup : bool) -> Vec<Vec<i32>> {
+        let mut result : Vec<Vec<i32>> = vec![];
+        let mut tmp : Vec<i32> = vec![];
+        let element_reusable = false;
+
+        let predicate = |result: &Vec<Vec<i32>>, tmp : &Vec<i32>|{
+            let valid = true;
+            let early_stop = false;
+            (valid, early_stop) };
+        let parse = |elements : &Vec<i32>, start_idx : usize, end_idx : usize|{
+            Some(elements[end_idx])
+        };
+        
+        Self::backtrack_helper(&mut result, &mut tmp, &nums, predicate, parse, 0, no_dup, element_reusable);
+        result
+    }
+
+    pub fn combination_sum(candidates: Vec<i32>, target: i32, element_reusable : bool) -> Vec<Vec<i32>> {
+        let mut result : Vec<Vec<i32>> = vec![];
+        let mut tmp : Vec<i32> = vec![];
+        let no_dup = false;
+
+        let predicate = |result: &Vec<Vec<i32>>, tmp : &Vec<i32>|{
+            let mut valid = false;
+            let mut early_stop = false;
+            let sum : i32 = tmp.iter().sum();
+            if sum > target {
+                early_stop = true;
+            } 
+            
+            if sum == target {
+                valid = true;
+                early_stop = true;
+            }
+            (valid, early_stop)
+        };
+        let parse = |elements : &Vec<i32>, start_idx : usize, end_idx : usize|{
+            Some(elements[end_idx])
+        };
+
+        Self::backtrack_helper(&mut result, &mut tmp, &candidates, predicate, parse, 0, no_dup, element_reusable);
+        result
+    }
+
+    pub fn partition(s: String) -> Vec<Vec<String>> {
+        let mut result : Vec<Vec<String>> = vec![];
+        let mut tmp : Vec<String> = vec![];
+        let element_reusable = false;
+        let no_dup = false;
+
+        let predicate = |result: &Vec<Vec<String>>, tmp : &Vec<String>|{
+            let early_stop = false;
+            let mut l = 0usize;
+            for t in tmp.iter() {
+                l+=t.len();
+            }
+            (l==s.len(), early_stop)
+        };
+
+        let parse = |elements : &Vec<char>, start_idx : usize, end_idx : usize|{
+            // end_idx is inclusive
+            let chars : Vec<char> = elements.iter().skip(start_idx).take(end_idx + 1 - start_idx).cloned().collect();
+            let n = chars.len();
+            for i in 0..n/2 {
+                if chars[i] != chars[n-1-i] {return None}
+            }
+            let parsed : String = chars.into_iter().collect();
+            Some(parsed)
+        };
+
+        let elements : Vec<char> = s.chars().collect();
+        Self::backtrack_helper(&mut result, &mut tmp, &elements, predicate, parse, 0, no_dup, element_reusable);
         result
     }
 
@@ -1153,13 +1250,63 @@ mod tests {
     use super::*;
     #[test]
     fn test_permcombsubset() {
-        assert_eq!(PermCompSubsetUtil::permute(vec![0,1], false), vec![vec![0,1],vec![1,0]]);
+        assert_eq!(BacktrackUtil::permute(vec![0,1], false), vec![vec![0,1],vec![1,0]]);
 
-        assert_eq!(PermCompSubsetUtil::permute(vec![1,1,2], true), vec![vec![1,1, 2],vec![1,2,1],vec![2,1,1]]);
+        assert_eq!(BacktrackUtil::permute(vec![1,1,2], true), vec![vec![1,1, 2],vec![1,2,1],vec![2,1,1]]);
 
-        assert_eq!(PermCompSubsetUtil::combine(vec![1,2,2,4], 2, false), vec![vec![1,2],vec![1,2],vec![1,4],vec![2,2],vec![2,4],vec![2,4]]);
+        assert_eq!(BacktrackUtil::combine(vec![1,2,2,4], 2, false), vec![vec![1,2],vec![1,2],vec![1,4],vec![2,2],vec![2,4],vec![2,4]]);
 
-        assert_eq!(PermCompSubsetUtil::combine(vec![1,2,2,4], 2, true), vec![vec![1,2],vec![1,4],vec![2,2],vec![2,4]]);
+        assert_eq!(BacktrackUtil::combine(vec![1,2,2,4], 2, true), vec![vec![1,2],vec![1,4],vec![2,2],vec![2,4]]);
+
+        assert_eq!(
+            BacktrackUtil::subsets(vec![1, 2, 2], false),
+            vec![
+                vec![],
+                vec![1],
+                vec![1, 2],
+                vec![1, 2, 2],
+                vec![1, 2],
+                vec![2],
+                vec![2, 2],
+                vec![2],
+            ]
+        );
+
+        assert_eq!(
+            BacktrackUtil::subsets(vec![1, 2, 2], true),
+            vec![
+                vec![],
+                vec![1],
+                vec![1, 2],
+                vec![1, 2, 2],
+                vec![2],
+                vec![2, 2],
+            ]
+        );
+
+        assert_eq!(
+            BacktrackUtil::combination_sum(vec![1, 1, 1, 1, 1, 1, 1], 7,false),
+            vec![vec![1, 1, 1, 1, 1, 1, 1]]
+        );
+
+        assert_eq!(
+            BacktrackUtil::combination_sum(vec![1], 7,true),
+            vec![vec![1, 1, 1, 1, 1, 1, 1]]
+        );
+
+        assert_eq!(
+            BacktrackUtil::partition("aab".to_owned()),
+            vec![ vec_string!["a", "a", "b"],vec_string!["aa", "b"],]
+        );
+        assert_eq!(
+            BacktrackUtil::partition("aaa".to_owned()),
+            vec![
+                vec_string!["a", "a", "a"],
+                vec_string!["a", "aa"],
+                vec_string!["aa", "a"],
+                vec_string!["aaa"],
+            ]
+        );
     }
 
     #[test]

@@ -31,13 +31,13 @@ pub struct Solution {}
 
 
 impl Solution {
-    pub fn recursive_helper<P>(result : &mut Vec<Vec<i32>>, tmp : &mut Vec<i32>, elements : &Vec<i32>, predicate: P, start : usize, no_dup : bool, element_reusable : bool) where P:Fn(&Vec<i32>, start : usize, n : usize)->(bool, bool) + Copy {
+    pub fn backtrack_helper<P>(result : &mut Vec<Vec<i32>>, tmp : &mut Vec<i32>, elements : &Vec<i32>, predicate: P, start : usize, no_dup : bool, element_reusable : bool) where P:Fn(&Vec<i32>)->(bool, bool) + Copy {
         // is_sorted() is only supported in nightly-built rust
         // if no_dup && !elements.is_sorted() {
         //     panic!("Elements must be presorted to deduplicate.");
         // }
         let n : usize = elements.len();
-        let (valid , backtrack) = predicate(tmp, start, n);
+        let (valid , backtrack) = predicate(tmp);
         if valid {
             result.push(tmp.clone());
         }
@@ -48,7 +48,7 @@ impl Solution {
                 if backtrack {
                     tmp.push(elements[i]);
                     let next_start = if element_reusable { i } else { i+1 };
-                    Self::recursive_helper(result, tmp, elements, predicate, next_start, no_dup, element_reusable);
+                    Self::backtrack_helper(result, tmp, elements, predicate, next_start, no_dup, element_reusable);
                     tmp.pop();
                 }
             }
@@ -56,7 +56,14 @@ impl Solution {
     }
 
     pub fn subsets(mut nums: Vec<i32>) -> Vec<Vec<i32>> {
-        Self::helper(&nums, 0)
+        let mut result : Vec<Vec<i32>> = vec![];
+        let mut tmp : Vec<i32> = vec![];
+        let element_reusable = false;
+        let no_dup = false;
+
+        let predicate = |tmp : &Vec<i32>|{ (true, true) };
+        Self::backtrack_helper(&mut result, &mut tmp, &nums, predicate, 0, no_dup, element_reusable);
+        result
     }
 
 }
@@ -72,7 +79,7 @@ mod tests {
         assert_eq!(Solution::subsets(vec![1]), vec![vec![], vec![1]]);
         assert_eq!(
             Solution::subsets(vec![1, 2]),
-            vec![vec![], vec![2], vec![1], vec![1, 2]]
+            vec![vec![], vec![1], vec![1,2], vec![2]]
         );
     }
 }

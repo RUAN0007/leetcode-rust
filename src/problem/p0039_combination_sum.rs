@@ -51,7 +51,7 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-    pub fn recursive_helper<P>(result : &mut Vec<Vec<i32>>, tmp : &mut Vec<i32>, elements : &Vec<i32>, predicate: P, start : usize, no_dup : bool, element_reusable : bool) where P:Fn(&Vec<i32>)->(bool, bool) + Copy {
+    pub fn backtrack_helper<P>(result : &mut Vec<Vec<i32>>, tmp : &mut Vec<i32>, elements : &Vec<i32>, predicate: P, start : usize, no_dup : bool, element_reusable : bool) where P:Fn(&Vec<i32>)->(bool, bool) + Copy {
         // is_sorted() is only supported in nightly-built rust
         // if no_dup && !elements.is_sorted() {
         //     panic!("Elements must be presorted to deduplicate.");
@@ -68,7 +68,7 @@ impl Solution {
                 if backtrack {
                     tmp.push(elements[i]);
                     let next_start = if element_reusable { i } else { i+1 };
-                    Self::recursive_helper(result, tmp, elements, predicate, next_start, no_dup, element_reusable);
+                    Self::backtrack_helper(result, tmp, elements, predicate, next_start, no_dup, element_reusable);
                     tmp.pop();
                 }
             }
@@ -93,7 +93,7 @@ impl Solution {
             (valid, backtrack)
         };
 
-        Self::recursive_helper(&mut result, &mut tmp, &candidates, predicate, 0, no_dup, element_reusable);
+        Self::backtrack_helper(&mut result, &mut tmp, &candidates, predicate, 0, no_dup, element_reusable);
         result
     }
 }
