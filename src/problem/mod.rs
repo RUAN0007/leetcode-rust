@@ -162,3 +162,4 @@ mod p0084_largest_rectangle_in_histogram;
 mod p0042_trapping_rain_water;
 mod p0726_number_of_atoms;
 mod p0127_word_ladder;
+mod p0039_combination_sum;

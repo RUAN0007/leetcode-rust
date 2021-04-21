@@ -44,8 +44,9 @@ Extremely powerful for leftmost/rightmost smaller/greater problems in an array.
 ## Recursions
 
 # Combination and Permutation
-##
-##
+* [31. Next Permutation](src/problem/p0031_next_permutation.rs)
+(Find the last increasing adjacent pair, the first of which is indexed with k. If k not exists, reverse the entire array. Otherwise, find the greatest l such that arr[l]>arr[k]. Swap l and k, and reverse arr[k+1..])
+## 
 
 # DP 
 ## 01 Knapsack

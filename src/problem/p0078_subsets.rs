@@ -31,22 +31,28 @@ pub struct Solution {}
 
 
 impl Solution {
-    pub fn helper(nums: &Vec<i32>, pos: usize) -> Vec<Vec<i32>> {
-        // println!("=========pos: {}================", pos);
-        let mut results = vec![vec![]];
-        for i in pos..nums.len() {
+    pub fn recursive_helper<P>(result : &mut Vec<Vec<i32>>, tmp : &mut Vec<i32>, elements : &Vec<i32>, predicate: P, start : usize, no_dup : bool, element_reusable : bool) where P:Fn(&Vec<i32>, start : usize, n : usize)->(bool, bool) + Copy {
+        // is_sorted() is only supported in nightly-built rust
+        // if no_dup && !elements.is_sorted() {
+        //     panic!("Elements must be presorted to deduplicate.");
+        // }
+        let n : usize = elements.len();
+        let (valid , backtrack) = predicate(tmp, start, n);
+        if valid {
+            result.push(tmp.clone());
+        }
+        if backtrack {
+            for i in start..n {
+                let backtrack : bool = if !no_dup {true} else if i==start{true}else if elements[i-1] != elements[i] {true}else{false};
 
-            let mut prev_subsets = Self::helper(nums, i+1);
-            // println!("   pos: {}, i: {}, prev_subsets: {:?}", pos, i, prev_subsets);
-            for mut prev_subset in prev_subsets {
-                let mut my_subset = vec![nums[i]];
-                my_subset.append(&mut prev_subset);
-                results.push(my_subset);
+                if backtrack {
+                    tmp.push(elements[i]);
+                    let next_start = if element_reusable { i } else { i+1 };
+                    Self::recursive_helper(result, tmp, elements, predicate, next_start, no_dup, element_reusable);
+                    tmp.pop();
+                }
             }
         }
-        // println!("pos: {}, subsets: {:?}", pos, results);
-        // println!("=========END pos: {}================", pos);
-        results
     }
 
     pub fn subsets(mut nums: Vec<i32>) -> Vec<Vec<i32>> {

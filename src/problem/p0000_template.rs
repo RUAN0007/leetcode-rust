@@ -1043,11 +1043,125 @@ impl ListUtil {
     }
 }
 
+struct PermCompSubsetUtil{} 
+impl PermCompSubsetUtil {
+    pub fn permute(mut elements : Vec<i32>, no_dup : bool ) -> Vec<Vec<i32>> {
+        let mut result : Vec<Vec<i32>> = vec![];
+        let n = elements.len();
+        if n == 1 {
+            result.push(vec![elements[0]]);
+        }
+        let mut processed : HashSet<i32> = HashSet::new();
+        for i in 0..n {
+            if processed.contains(&elements[i]) {
+                continue;
+            }
+            processed.insert(elements[i]);
+            elements.swap(0, i);
+            let sub_elements : Vec<i32> = elements.iter().cloned().skip(1).take(n-1).collect();
+            let prev_perms : Vec<Vec<i32>> = Self::permute(sub_elements, no_dup);
+            for prev_perm in prev_perms {
+                let mut my_perm : Vec<i32> = vec![elements[0]];
+                my_perm.extend(prev_perm.clone());
+                result.push(my_perm);
+            }
+
+            elements.swap(i, 0);
+        }
+        // println!("elements={:?}, result={:?}", elements,result);
+        result
+    }
+
+    pub fn recursive_helper<P>(result : &mut Vec<Vec<i32>>, tmp : &mut Vec<i32>, elements : &Vec<i32>, predicate: P, start : usize, no_dup : bool, element_reusable : bool) where P:Fn(&Vec<i32>)->(bool, bool) + Copy {
+        // is_sorted() is only supported in nightly-built rust
+        // if no_dup && !elements.is_sorted() {
+        //     panic!("Elements must be presorted to deduplicate.");
+        // }
+        let (valid , backtrack) = predicate(tmp);
+        if valid {
+            result.push(tmp.clone());
+        }
+        if backtrack {
+            let n : usize = elements.len();
+            for i in start..n {
+                let backtrack : bool = if !no_dup {true} else if i==start{true}else if elements[i-1] != elements[i] {true}else{false};
+
+                if backtrack {
+                    tmp.push(elements[i]);
+                    let next_start = if element_reusable { i } else { i+1 };
+                    Self::recursive_helper(result, tmp, elements, predicate, next_start, no_dup, element_reusable);
+                    tmp.pop();
+                }
+            }
+        }
+    }
+
+    pub fn combine(mut elements : Vec<i32>, k : usize, no_dup : bool) -> Vec<Vec<i32>>{
+        let mut result : Vec<Vec<i32>> = vec![];
+        let mut tmp : Vec<i32> = vec![];
+        let element_reusable = false;
+        if no_dup {elements.sort()}
+
+        let predicate = |tmp : &Vec<i32>|{
+            let mut valid = false;
+            let mut backtrack = false;
+            if tmp.len() < k {
+                backtrack = true;
+            } else if tmp.len() == k {
+                valid = true;
+            }
+            (valid, backtrack)
+        };
+        Self::recursive_helper(&mut result, &mut tmp, &elements, predicate, 0, no_dup, element_reusable);
+        result
+    }
+
+    pub fn combine_dp(n: i32, k: i32) -> Vec<Vec<i32>> {
+        let n = n as usize;
+        let k = k as usize;
+        let mut all : Vec<Vec<Vec<i32>>> = vec![vec![vec![]]; k+1];
+
+        for ni in 1..=n {
+            // (1..i as i32).collect();
+            all[0] = vec![vec![]];
+            for ki in (1..=k as usize).rev() {
+                if ki == ni {
+                    all[ni] = vec![(1..=ni as i32).collect()];
+
+                } else if ki < ni {
+                    // println!("\tki={}, ni={}, all[ki-1] = {:?}", ki, ni, all[ki-1]);
+                    for mut prev_comb in all[ki-1].clone() {
+                        prev_comb.push(ni as i32);
+                        // println!("\tki={}, ni={}, prev_comb = {:?}", ki, ni, prev_comb);
+                        all[ki].push(prev_comb);
+                    }
+
+                } else {
+                    // n < ki => invalid case, ignore. 
+                }
+            }
+            // println!("ni={}, {:?}", ni, all);
+        }
+        all[k].clone()
+    }
+}
+
 // submission codes end
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn test_permcombsubset() {
+        assert_eq!(PermCompSubsetUtil::permute(vec![0,1], false), vec![vec![0,1],vec![1,0]]);
+
+        assert_eq!(PermCompSubsetUtil::permute(vec![1,1,2], true), vec![vec![1,1, 2],vec![1,2,1],vec![2,1,1]]);
+
+        assert_eq!(PermCompSubsetUtil::combine(vec![1,2,2,4], 2, false), vec![vec![1,2],vec![1,2],vec![1,4],vec![2,2],vec![2,4],vec![2,4]]);
+
+        assert_eq!(PermCompSubsetUtil::combine(vec![1,2,2,4], 2, true), vec![vec![1,2],vec![1,4],vec![2,2],vec![2,4]]);
+    }
+
     #[test]
     fn test_tree() {
         assert_eq!(TreeUtil::bfs(tree![1, 2, 2, 3, 4, 4, 3]), vec![1, 2, 2, 3, 4, 4, 3]);
