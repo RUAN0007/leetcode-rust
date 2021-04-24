@@ -35,24 +35,27 @@ pub struct Solution {}
 use std::collections::BTreeMap;
 impl Solution {
     pub fn h_index(citations: Vec<i32>) -> i32 {
-        let mut counts = BTreeMap::new();
-        for citation in citations {
-            if let Some(count) = counts.get_mut(&citation) {
-                *count += 1;
+        let mut citation_counts : Vec<usize> = vec![0;1001usize];
+        for &citation in citations.iter() {
+            citation_counts[citation as usize] += 1;
+        }
+
+        let mut last_h : usize = 0;
+        for c in (0..=1000).rev() {
+            let mut h : usize = last_h + citation_counts[c];
+            if h <= c {
+                // h books has at least c citations =>
+                // h books has at least h citations
+                last_h = h;
             } else {
-                counts.insert(citation, 1);
+                h = last_h;
+                while h < c {
+                    h += 1;
+                }
+                return h as i32;
             }
         }
-        let mut count_sum = 0;
-        for (&citation, &count) in counts.iter().rev() {
-            if count_sum + count > citation {
-                count_sum = std::cmp::max(citation, count_sum);
-                break;
-            }
-            count_sum += count;
-            // so far, ${count_sum} papers have citation at least ${citation}.
-        }
-        count_sum
+        0
     }
 }
 

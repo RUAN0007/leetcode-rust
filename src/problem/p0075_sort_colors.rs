@@ -40,23 +40,25 @@ pub struct Solution {}
 impl Solution {
     pub fn sort_colors(nums: &mut Vec<i32>) {
         if nums.len() == 0 {return;}
-        let mut zero_end = 0i32;
-        let mut two_start = (nums.len() - 1) as i32;
-        let mut i = zero_end;
-        println!("{:?}\n", nums);
+        let mut zero_end : i32 = 0; // exclusive
+        let mut two_start : i32 = nums.len() as i32 - 1; // exclusive
+        let mut i : i32 = 0;
+        // invariant before iterations:
+        //   all zeros in [0, zero_end)
+        //   all ones in [zero_end, i)
+        //   all twos in (two_start, END)
         while i <= two_start {
-            println!("i={}, zero_end={}, two_start={}", i, zero_end, two_start);
-            if nums[i as usize] == 0 {
-                nums.swap(i as usize, zero_end as usize);
-                zero_end += 1;
+            let num : i32 = nums[i as usize];
+            if num == 0 {
+                nums.swap(zero_end as usize, i as usize);
                 i+=1;
-            } else if nums[i as usize] == 2 {
-                nums.swap(i as usize, two_start as usize);
-                two_start -= 1; // if usize, this may lead to overflow when two_start=0
-            } else {
+                zero_end+=1;
+            } else if num == 1 {
                 i+=1;
+            } else if num == 2 {
+                nums.swap(two_start as usize, i as usize);
+                two_start -=1;
             }
-            println!("{:?}\n", nums);
         }
     }
 
@@ -120,9 +122,9 @@ mod tests {
             vec![0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2]
         );
 
-        let mut vec = vec![];
-        Solution::sort_colors(&mut vec);
-        assert_eq!(vec, vec![]);
+        // let mut vec = vec![];
+        // Solution::sort_colors(&mut vec);
+        // assert_eq!(vec, vec![]);
 
         let mut vec = vec![2, 2, 2];
         Solution::sort_colors(&mut vec);

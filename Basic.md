@@ -177,9 +177,17 @@ Suitable for problems where solutions are within in a range and the tentative so
 ### Bucket Sort
 * [164. Maximum Gap](src/problem/p0164_maximun_gap.rs)
 * [274. H-Index](src/problem/p0274_h_index.rs)
-### Partial Sort
 ### Cardinality Sort
 * [75. Sort Colors](src/problem/p0075_sort_colors.rs)
+### Wiggle Sort
+```
+# Handy code to produce a mapped index, like [0,2,4,1,3,5] or [0,2,4,1,3]
+(0..(n+1)/2).map(|x|{2*x}).collect(); // [0,2,4] when n=5 or 6.
+(0..n/2).map(|x|{2*x}).collect(); // [1,3] when n=5, or [1,3,5] when n=6.
+In [1,3,5,0,4] or [1,3,5,0,2,4], every consecutive three are not adjacent. 
+```
+* [324. Wiggle Sort II](src/problem/p0324_wiggle_sort_ii.rs)
+* [767. Reorganize String](src/problem/p0767_reorganize_string.rs)
 
 ## Matrix Traversal
 ### Spiral
