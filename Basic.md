@@ -42,19 +42,153 @@ Extremely powerful for leftmost/rightmost smaller/greater problems in an array.
 
 
 ## Recursions
+### Path Searching
+* [79. Word Search](src/problem/p0079_word_search.rs)
+* [212. Word Search II](src/problem/p0212_word_search_ii.rs)
 
-# Combination and Permutation
+### Backtrack
+A general backtrack template is provided in the [template](src/problem/p0000_template.rs). This can help the following problems: 
+* [78. Subsets](src/problem/p0078_subsets.rs)
+* [40. Combination Sum](src/problem/p0039_combination_sum.rs)
+* [77. Combinations](src/problem/p0077_combinations.rs)
+* [131. Palindrome Partitioning](src/problem/p0131_palindrome_partitioning.rs)
+
+## Permutation
+A general permutation template is provided in the [template](src/problem/p0000_template.rs). This can help the following problems: 
 * [31. Next Permutation](src/problem/p0031_next_permutation.rs)
 (Find the last increasing adjacent pair, the first of which is indexed with k. If k not exists, reverse the entire array. Otherwise, find the greatest l such that arr[l]>arr[k]. Swap l and k, and reverse arr[k+1..])
-## 
 
-# DP 
-## 01 Knapsack
-## Infinite Knapsack
-## Classics
+## Dynamic Programming
+### Knapsack
+Can use DP only if the states are enumerable, e.g, the target sum is integer. 
+Otherwise, must apply the recursion. 
+### Bounded
+Elements can NOT be reused. 
+* [416. Partition Equal Subset Sum](src/problem/p0416_partition_equal_subset_sum.rs)
+* [494. Target Sum](src/problem/p0494_target_sum.rs)
+### Unbounded
+Elements can be reused. 
+* [322. Coin Change](src/problem/p0322_coin_change.rs)
+* [518. Coin Change 2](src/problem/p0518_coin_change_ii.rs)
+### Generalized Approach
+```
+// result[i][j] represent the result to reach state j only with the first i elements. i=0 implies no elements considered. 
+Init result[element_count+1][state_count]
 
-## Other Hard
+for i = 1..=element_count: 
+  for j = 0..=state_count:
+    // Bounded
+    this_element = element[i-1]
+    if j < this_element {
+      Derive result[i][j] from result[i-1][j]
+    } else if bounded {
+      Derive result[i][j] from result[i-1][j-this_element]
+    } else {
+      Derive result[i][j] from result[i][j-this_element]
+    }
+result[element_count][state_count]
+```
+
+### Classics
+* [300. Longest Increasing Subsequence](src/problem/p0300_longest_increasing_subsequence.rs)
+### 2D
+* [72. Edit Distance](src/problem/p0072_edit_distance.rs)
+* [718. Maximum Length of Repeated Subarray](src/problem/p0718_maximum_length_of_repeated_subarray.rs) 
+* [1092. Shortest Common Supersequence](src/problem/p1092_shortest_common_supersequence.rs)
+* [1143. Longest Common Subsequence](src/problem/p1143_longest_common_subsequence.rs)
+* [Others](https://www.techiedelight.com/top-10-dynamic-programming-problems/)
+
+## Binary Search
+Refer to the [template](src/problem/p0000_template.rs) for the classic binary search problem, such as _first greater element_, and etc. 
+```
+// Assume the target must exist
+low = 0i32; // inclusive and can be negative
+high = nums.len() as i32 - 1;// inclusive and can be negative
+
+while low < high {
+  let mid = (low + high) / 2;
+  // three branches can be merged. 
+  if nums[mid]==target{
+  // may additional test whether it is the first and the last to be true
+  // If meeting condition: return
+  // else shrink the range:
+    high = mid or mid-1
+    low = mid + 1; NEVER low = mid, otherwise the loop is infinite. 
+  } else if nums[mid] < target {
+    // similar as above
+  } else {
+    // similar as above
+  }
+}
+low
+
+// Assume the target may not exist
+low = 0i32; // inclusive and can be negative
+high = nums.len() as i32 - 1;// inclusive and can be negative
+
+while low <= high {
+  let mid = (low + high) / 2;
+  // three branches can be merged. 
+  if nums[mid]==target{
+  // may additional test whether it is the first and the last to be true
+  // If meeting condition: return
+  // else shrink the range:
+    high = mid - 1; or
+    low = mid + 1; NEVER high/low = mid, otherwise the loop is infinite. 
+  } else if nums[mid] < target {
+    // similar as above
+  } else {
+    // similar as above
+  }
+}
+```
+
+### Rotated Sorted List
+```
+// A general approach
+let left = 0;
+let right = nums.len() - 1;
+while low <= high {
+  // check mid_num
+  if left_num < mid_num {
+    // adjust the ranges given that [left, mid] is sorted.
+    // Assume [left, mid] is not sorted, then suppose nums[left=0]=0 nums[left+1=-1] a[mid=2]=1, this array can never be rotated to be sorted. 
+  } else if left_num > mid_num {
+    // adjust the ranges given that [mid, right] is sorted. 
+  } else {
+    // increment left given that left_num = mid_num
+  }
+}
+-1
+```
+* [33. Search in Rotated Sorted Array](src/problem/p0033_search_in_rotated_sorted_array.rs)
+* [153. Find Minimum in Rotated Sorted Array](src/problem/p0153_find_minimum_in_rotated_sorted_array.rs)
+* [81. Search in Rotated Sorted Array II](src/problem/p0081_search_in_rotated_sorted_array_ii.rs)
+* [154. Find Minimum in Rotated Sorted Array II](src/problem/p0154_find_minimum_in_rotated_sorted_array_ii.rs)
+### Max-min
+Suitable for problems where solutions are within in a range and the tentative solution is easy to verify. 
+* [410. Split Array Largest Sum](src/problem/p0410_split_array_largest_sum.rs)
+* [875. Koko Eating Bananas](src/problem/p0875_koko_eating_bananas.rs)
+
+### H-Index
+* [275. H-Index II](src/problem/p0275_h_index_ii.rs)
+(Find the smallest i such that citations[i] >= n-i, return n-i)
+## Sort
+### Bucket Sort
+* [164. Maximum Gap](src/problem/p0164_maximun_gap.rs)
+* [274. H-Index](src/problem/p0274_h_index.rs)
+### Partial Sort
+### Cardinality Sort
+* [75. Sort Colors](src/problem/p0075_sort_colors.rs)
+
+## Matrix Traversal
+### Spiral
+### Left Diagonal
+### Right Diagonal
+## Others
 * [42. Trapping Rain Water](src/problem/p0042_trapping_rain_water.rs)
+### Palindrome Series
+NOTE: DP recursion for palindrome
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
     * BtreeMap

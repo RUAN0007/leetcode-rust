@@ -1241,6 +1241,25 @@ impl BacktrackUtil {
         }
         all[k].clone()
     }
+
+    pub fn track(board: &Vec<Vec<char>>, i : i32, j : i32, target : &String, visited: &mut HashSet<(i32,i32)>) -> bool{
+        if target.len() == 0 {return true;}
+        let target_char : char = target.chars().nth(0).unwrap();
+        let row_count : i32 = board.len() as i32;
+        let col_count : i32 = board[0].len() as i32;
+        let mut found = false;
+        if (!visited.contains(&(i,j)) && 0 <= i  && i < row_count && 0 <= j && j < col_count && board[i as usize][j as usize] == target_char) {
+            let next_target : String = String::from(&target[1..]);
+            visited.insert((i,j));
+            found = Self::track(board, i-1, j, &next_target, visited) ||
+            Self::track(board, i+1, j, &next_target, visited) ||
+            Self::track(board, i, j-1, &next_target, visited) ||
+            Self::track(board, i, j+1, &next_target, visited);
+            visited.remove(&(i,j));
+        }
+
+        found
+    }
 }
 
 // submission codes end

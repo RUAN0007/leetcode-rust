@@ -34,36 +34,39 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-    // low, hign are inclusive index. 
-    pub fn helper(nums: &Vec<i32>, low: usize, high: usize, target: i32) -> i32 {
-        let mid = (low + high) / 2;
-        if high - low <= 1 {
-            if nums[high] == target {high as i32} 
-            else if nums[low] == target {low as i32} else {-1}
-        
-        // Two possible 1-2-3 pattern, target within an an increasing interval
-        } else if nums[low] <= target && target <= nums[mid] {
-            Self::helper(nums, low, mid, target)
-        } else if nums[mid] <= target && target <= nums[high] {
-            Self::helper(nums, mid, high, target)
 
-        // Two possible 3-1-2 pattern or 2-3-1 pattern, target le to the lower bound of an decreasing interval. 
-        } else if nums[low] > nums[mid] && (nums[low] <= target || target <= nums[mid]) {
-            Self::helper(nums, low, mid, target)
-        } else if nums[mid] > nums[high] && (nums[mid] <= target || target <= nums[high]) {
-            Self::helper(nums, mid, high, target)
-
-        } else {
-            // println!("Impossible pattern with low = {}, mid = {}, high = {}, nums[low]={}, nums[mid]={}, nums[high]={} target={} ", low, mid, high, nums[low], nums[mid], nums[high], target);
-           -1 
-        }
-
-    }
     pub fn search(nums: Vec<i32>, target: i32) -> i32 {
-        if nums.len() == 0 {
-            return -1;
+        let mut low : i32 = 0;
+        let mut high : i32 = nums.len() as i32 - 1;
+        while low <= high {
+            let mid : i32 = (low + high) / 2;
+            let mid_num : i32 = nums[mid as usize];
+            let right_num : i32 = nums[high as usize];
+            let left_num : i32 = nums[low as usize];
+            // println!("low[{}]={}, mid[{}]={}, right[{}]={}", low, left_num, mid, mid_num, high, right_num);
+            if mid_num == target {
+                return mid;
+            } else if left_num < mid_num {
+                //[low, mid] must be sorted. 
+                if left_num <= target && target < mid_num {
+                    // in the ordered left half
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+            } else if left_num > mid_num {
+                // [mid, high] must be sorted.
+                if mid_num < target && target <= right_num {
+                    // in the ordered right half
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            } else {
+                low += 1;
+            }
         }
-        Self::helper(&nums, 0, nums.len() - 1, target)
+        -1
     }
 }
 
@@ -75,26 +78,27 @@ mod tests {
 
     #[test]
     fn test_33() {
-        assert_eq!(Solution::search(vec![7, 8, 1, 2, 3, 4, 5, 6], 2), 3);
-        assert_eq!(
-            Solution::search(
-                vec![
-                    1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 0, 1, 2, 3, 4, 5, 6, 7, 8
-                ],
-                0
-            ),
-            9
-        );
-        assert_eq!(
-            Solution::search(
-                vec![
-                    1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 0, 1, 2, 3, 4, 5, 6, 7, 8
-                ],
-                1006
-            ),
-            2
-        );
-        assert_eq!(Solution::search(vec![4, 5, 6, 7, 0, 1, 2], 3), -1);
-        assert_eq!(Solution::search(vec![], 3), -1);
+        // assert_eq!(Solution::search(vec![7, 8, 1, 2, 3, 4, 5, 6], 2), 3);
+        // assert_eq!(
+        //     Solution::search(
+        //         vec![
+        //             1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 0, 1, 2, 3, 4, 5, 6, 7, 8
+        //         ],
+        //         0
+        //     ),
+        //     9
+        // );
+        // assert_eq!(
+        //     Solution::search(
+        //         vec![
+        //             1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 0, 1, 2, 3, 4, 5, 6, 7, 8
+        //         ],
+        //         1006
+        //     ),
+        //     2
+        // );
+        // assert_eq!(Solution::search(vec![4, 5, 6, 7, 0, 1, 2], 3), -1);
+        // assert_eq!(Solution::search(vec![], 3), -1);
+        assert_eq!(Solution::search(vec![5,1,3], 5), 0);
     }
 }

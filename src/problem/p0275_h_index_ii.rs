@@ -37,72 +37,49 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-    pub fn helper(citations: &Vec<i32>, start: usize, end: usize) -> i32 {
-        // println!("start={}, end={}", start, end);
-        // Base case, the number of elements is <= 2. 
-        let length = end - start;
-        if length <= 2 {
-            for i in start..end {
-                // println!("   citations.len() - i={}, citations[i]={}", citations.len() - i, citations[i]);
-                if citations.len() - i <= citations[i] as usize {
-                    return (citations.len() - i) as i32;
-                }
-            }  // end for
-            return 0;
-        }  // end if
-
-        let mid = (start + end) / 2;
-        if citations.len() - mid <= citations[mid] as usize {
-            return Self::helper(citations, start, mid+1);
-        } else {
-            return Self::helper(citations, mid+1, end);
-        }
-
-    }
-
     pub fn h_index(citations: Vec<i32>) -> i32 {
-        let n = citations.len();
-        if n == 0 {return 0}
-        let mut low = 0;
-        let mut high = citations.len() - 1;
-        while low <= high {
-            let mid = (low + high) / 2;
-            if n - mid == citations[mid] as usize {
-                return (n - mid) as i32;
-            } else if n - mid <= citations[mid] as usize {
-                if mid == 0 || (citations[mid-1] as usize) < (n - mid + 1) {
-                    return (n - mid) as i32;
+        // find the smallest i such that citations[i] >= n-i,return n-i.
+        let mut left = 0i32;
+        let mut n = citations.len() as i32;
+        let mut right = n - 1;
+        while left <= right {
+            let mid : i32 = (left + right) / 2;
+            let h : i32 = n - mid;
+            if citations[mid as usize] >= h {
+                if mid == 0 || !(citations[mid as usize -1]>=h+1){
+                    return h;
+                } else {
+                    // i can be smaller
+                    right = mid - 1;
                 }
-
-                high = mid - 1;
             } else {
-                low = mid + 1;
+                left = mid + 1;
             }
         }
         0
     }
 
-    pub fn h_index_2(citations: Vec<i32>) -> i32 {
-        // if citations.len() == 0 {
-        //     return 0
-        // } else {
-        //     return Self::helper(&citations, 0, citations.len());
-        // }
-        let mut low = 0;
-        let mut high = citations.len();
-        let n = citations.len();
-        while low < high {
-            let mid = (low + high) / 2;
-            if n - mid == citations[mid] as usize {
-                return (n - mid) as i32;
-            } else if n - mid < citations[mid] as usize {
-                high = mid;
-            } else {
-                low = mid + 1;
-            }
-        }
-        return (n - low) as i32;
-    }
+    // pub fn h_index_2(citations: Vec<i32>) -> i32 {
+    //     // if citations.len() == 0 {
+    //     //     return 0
+    //     // } else {
+    //     //     return Self::helper(&citations, 0, citations.len());
+    //     // }
+    //     let mut low = 0;
+    //     let mut high = citations.len();
+    //     let n = citations.len();
+    //     while low < high {
+    //         let mid = (low + high) / 2;
+    //         if n - mid == citations[mid] as usize {
+    //             return (n - mid) as i32;
+    //         } else if n - mid < citations[mid] as usize {
+    //             high = mid;
+    //         } else {
+    //             low = mid + 1;
+    //         }
+    //     }
+    //     return (n - low) as i32;
+    // }
 }
 
 // submission codes end

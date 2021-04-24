@@ -31,44 +31,38 @@ pub struct Solution {}
 
 impl Solution {
 
-    pub fn helper(nums: &Vec<i32>, start: usize, end: usize, target: i32) -> bool {
-
-        if start >= end {
-            return false;
-        }
-
-        let mid = (start + end) / 2;
-        let mid_num = nums[mid];
-        // println!("start: nums[{}]={}, end: nums[{}]={}, mid: nums[{}]={}", start, nums[start], end-1, nums[end-1], mid, mid_num);
-        if mid_num == target {
-            return true;
-        } else if nums[start] <= target && target < nums[mid] {
-            // println!(" In First Increasing Interval");
-            return Self::helper(nums, start, mid, target);
-        } else if nums[mid] < target && target <= nums[end-1] {
-            // println!(" In Second Increasing Interval");
-            return Self::helper(nums, mid+1, end, target);
-        } 
-        
-        let mut result = false; 
-        if nums[start] >= nums[mid] && (target < nums[mid] || nums[start] <= target) {
-            // println!(" In First Non-increasing Interval");
-            result = Self::helper(nums, start, mid, target)
-        } 
-        
-        if result {return true; }
-        
-        if nums[mid] >= nums[end-1] && (target <= nums[end-1] || nums[mid]< target) {
-            // println!(" In Second Non-increasing Interval");
-            result = Self::helper(nums, mid+1, end, target)
-        }
-        result
-    }
-
     pub fn search(nums: Vec<i32>, target: i32) -> bool {
-        let mut start = 0usize;  // inclusive
-        let mut end = nums.len(); // exclusive
-        Self::helper(&nums, start, end, target)
+        let mut low : i32 = 0;
+        let mut high : i32 = nums.len() as i32 - 1;
+        while low <= high {
+            let mid : i32 = (low + high) / 2;
+            let mid_num : i32 = nums[mid as usize];
+            let right_num : i32 = nums[high as usize];
+            let left_num : i32 = nums[low as usize];
+            // println!("low[{}]={}, mid[{}]={}, right[{}]={}", low, left_num, mid, mid_num, high, right_num);
+            if mid_num == target {
+                return true;
+            } else if left_num < mid_num {
+                //[low, mid] must be sorted. 
+                if left_num <= target && target < mid_num {
+                    // in the ordered left half
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+            } else if left_num > mid_num {
+                // [mid, high] must be sorted.
+                if mid_num < target && target <= right_num {
+                    // in the ordered right half
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            } else {
+                low += 1;
+            }
+        }
+        false
     }
 }
 
@@ -88,6 +82,11 @@ mod tests {
         assert_eq!(
             Solution::search(vec![1,1], 0),
            false 
+        );
+
+        assert_eq!(
+            Solution::search(vec![1,0,1,1,1], 0),
+           true 
         );
 
     }

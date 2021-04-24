@@ -45,30 +45,20 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-    pub fn helper(start: usize, end: usize, nums: &Vec<i32>) -> usize {
-        if start == end {
-            return start;
-        } else if start + 1 == end {
-            if nums[start] < nums[end] {
-                return start;
+    pub fn find_min(nums: Vec<i32>) -> i32 {
+        let mut low = 0i32;
+        let n = nums.len() as i32;
+        let mut high = n - 1;
+        while low < high {
+            let mid : i32 = (low + high) / 2;
+            if nums[mid as usize] < nums[high as usize] {
+                high = mid;
             } else {
-                return end;
+                low = mid + 1;
             }
         }
 
-        let mid = (end+start)/2;
-        // println!("start = {}, end = {}, mid = {}", start, end, mid);
-        if nums[start] < nums[mid] {
-            return Self::helper(mid, end, nums);
-        } else {
-            return Self::helper(start, mid, nums);
-        }
-    }
-    pub fn find_min(nums: Vec<i32>) -> i32 {
-        let mut nums = nums;
-        nums.push(nums[0].clone());
-        nums[Self::helper(0, nums.len()-1, &nums)]
-
+        nums[low as usize]
     }
 }
 

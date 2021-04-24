@@ -35,44 +35,30 @@ pub struct Solution {}
 
 impl Solution {
 
-    pub fn helper(nums: &Vec<i32>, start: usize,end: usize) -> i32 {
-        // start is inclusive, end is exclusive
-        // println!("start = {}, end = {}", start, end);
-        if start >= end {
-            panic!("start {} is ge than end {}", start, end);
-        }  
-        
-        if start == end - 1 {
-            return nums[start]; // only one valid point
-        } 
-
-        //NOTE down start = end - 1
-        let mid = (start + end) / 2;
-        if 0 < mid && nums[mid-1] > nums[mid] {
-            return nums[mid];
-        } else if nums[start-1] > nums[mid] {
-            return Self::helper(nums, start, mid);
-        } else if  nums[mid] > nums[end-1] && mid+1 < end {
-            return Self::helper(nums, mid+1, end);
-        } 
-
-        let mut this_min = 2147483647; 
-        if  nums[start-1] == nums[mid] {
-            let left = Self::helper(nums, start, mid);
-            this_min = std::cmp::min(this_min, left);
-        }
-
-        if nums[mid] == nums[end-1] && mid+1 < end {
-            let right = Self::helper(nums, mid+1, end);
-            this_min = std::cmp::min(this_min, right);
-        }
-        return this_min;
-    }
-
     pub fn find_min(mut nums: Vec<i32>) -> i32 {
-        // This is to ensure we must find nums[i-1] > nums[i] in case of a sorted vec. 
-        nums.push(nums[0]); 
-        Self::helper(&nums, 1, nums.len())
+        let mut min : i32 = 5000;
+        let mut left : i32 = 0i32;
+        let mut right : i32 = nums.len() as i32 - 1;
+        while left <= right {
+            let mid : i32 = (left + right) / 2;
+            let left_num = nums[left as usize];
+            let mid_num = nums[mid as usize];
+            let right_num = nums[right as usize];
+
+            if left_num < mid_num {
+                //[left, mid] is non-decreasing
+                min = std::cmp::min(min, left_num);
+                left = mid + 1;
+            } else if left_num > mid_num {
+                //[mid, right] is non-decreasing
+                min = std::cmp::min(min, mid_num);
+                right = mid - 1;
+            } else {
+                min = std::cmp::min(min, left_num);
+                left += 1;
+            }
+        }
+        min
     }
 }
 
@@ -84,11 +70,11 @@ mod tests {
 
     #[test]
     fn test_154() {
-        // assert_eq!(Solution::find_min(vec![1, 2, 2, 2, 2, 2]), 1);
-        // assert_eq!(Solution::find_min(vec![1, 3, 3]), 1);
-        // assert_eq!(Solution::find_min(vec![3, 1, 3, 3]), 1);
-        // assert_eq!(Solution::find_min(vec![1, 1]), 1);
-        // assert_eq!(Solution::find_min(vec![3, 3, 3, 1]), 1);
+        assert_eq!(Solution::find_min(vec![1, 2, 2, 2, 2, 2]), 1);
+        assert_eq!(Solution::find_min(vec![1, 3, 3]), 1);
+        assert_eq!(Solution::find_min(vec![3, 1, 3, 3]), 1);
+        assert_eq!(Solution::find_min(vec![1, 1]), 1);
+        assert_eq!(Solution::find_min(vec![3, 3, 3, 1]), 1);
         assert_eq!(Solution::find_min(vec![3, 1, 1]), 1);
     }
 }
