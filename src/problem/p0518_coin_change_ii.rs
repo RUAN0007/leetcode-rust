@@ -58,6 +58,32 @@ pub struct Solution {}
 
 impl Solution {
     pub fn change(amount: i32, coins: Vec<i32>) -> i32 {
+        
+        let amount : usize = amount as usize;
+        let mut result : Vec<Vec<i32>> = vec![vec![0;amount+1];coins.len()+1];
+        // result[i][j] represent the ways to make amount i with the first j coins. 
+
+        result[0][0] = 1;
+        for j in 1..=amount {
+            // no way to make up any amount without coins. 
+            result[0][j] = 0;
+        }
+        for i in 1..=coins.len() {
+            result[i][0] = 1;
+            for j in 1..=amount {
+                //make up only using the first i-1 coints.
+                result[i][j] = result[i-1][j];
+                let this_coin : usize = coins[i-1] as usize;
+                if this_coin <= j {
+                    //make up only using at least one coin[i]
+                    result[i][j] += result[i][j-this_coin];
+                }
+            }
+        }
+        result[coins.len()][amount]
+    }
+
+    pub fn change_1d(amount: i32, coins: Vec<i32>) -> i32 {
         let mut amount = amount as usize;
         let mut result = vec![0;amount+1];
         result[0] = 1; 
@@ -68,27 +94,6 @@ impl Solution {
             }
         }
         result[amount]
-    }
-
-    pub fn change_2d(amount: i32, coins: Vec<i32>) -> i32 {
-        let mut amount = amount as usize;
-        // result[i][j] denote for # of ways to make up j amount with the first i coins. E.g, result[1][1] = # of ways to make up 1 amount with the first coin, coin[0]. 
-        let mut result = vec![vec![0;amount+1];coins.len()+1];
-        result[0][0] = 1;
-        for i in 1..=coins.len() {
-            result[i][0] = 1;
-            for j in 0..=amount {
-                let this_coin = coins[i-1] as usize;
-                if this_coin <= j {
-                    result[i][j] = result[i-1][j] // # of ways to make up j WITHOUT i-th coin. 
-                                   + result[i][j-this_coin]; // # of ways to make up j WITH AT LEAST i-th coin. 
-                } else {
-                    result[i][j] = result[i-1][j];
-                }
-            }
-        }
-
-        result[coins.len()][amount]
     }
 }
 

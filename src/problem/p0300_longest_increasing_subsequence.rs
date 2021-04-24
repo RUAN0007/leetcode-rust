@@ -41,35 +41,51 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-    pub fn binary_search(tails: &Vec<i32>, start_pos: usize, end_pos: usize, target: i32)->usize {
-        // start_pos: inclusive, end_pos: exclusive
-        let mid = (start_pos + end_pos) / 2;
-        if target <= tails[mid] {
-            Self::binary_search(tails, start_pos, mid, target)
-        } else if tails[mid+1] < target {
-            Self::binary_search(tails, mid+1, end_pos, target)
-        } else {
-            mid
+    pub fn find_last_list_index_with_smaller_end(lises : &Vec<Vec<i32>>, target : i32) -> i32 {
+        let mut low = 0i32;
+        let mut high = lises.len() as i32 - 1;
+        let n = lises.len() as i32;
+        while low <= high {
+            let mid = ((low + high) / 2) as usize;
+            let mid_num = *lises[mid].last().unwrap();
+            // println!("low={}, high={}, mid={}, mid_num={}", low, high, mid, mid_num);
+            if mid_num < target {
+                if mid as i32 == (n-1) || !(*lises[mid+1].last().unwrap() < target) {
+                    return mid as i32;
+                } else {
+                    low = mid as i32 + 1;
+                }
+            } else {
+                high = mid as i32 - 1;
+            }
         }
+        -1 // not found. 
     }
 
     pub fn length_of_lis(nums: Vec<i32>) -> i32 {
-        // i-th element the smallest tail element of lis of length i. 
-        // tails is sorted. 
-        let mut tails = vec![];
-        tails.push(-10000);
-        for num in nums {
-            if *tails.last().unwrap() < num {
-                tails.push(num);
-            }  else {
-                // binary search to locate a[i] < num <= a[i+1]
-                // i can be the last such that a[i+1] does not exist. 
-                let i = Self::binary_search(&tails, 0, tails.len(), num);
-                tails[i+1] = num;
+        // lises[i] maintains the longest increasing subsequent of length i, known so far. 
+        let mut lises = vec![];
+        for &num in nums.iter() {
+            let l = Self::find_last_list_index_with_smaller_end(&lises, num);
+            let mut new_list : Vec<i32> = vec![];
+            if l != -1 {
+                new_list = lises[l as usize].clone();
+            }
+            new_list.push(num);
+            // println!("num={}, l={}, new_list={:?}", num, l, new_list);
+            // println!("lises={:?}", lises);
+            // println!("=========================================");
+            let insert_idx = (l + 1) as usize;
+            if insert_idx < lises.len() {
+                lises[insert_idx] = new_list;
+            } else if insert_idx == lises.len() {
+                lises.push(new_list);
+            } else {
+                panic!("Impossible...");
             }
         }
-
-        (tails.len()-1) as i32
+        // println!("lis={:?}", *lises.last().unwrap());
+        lises.last().unwrap().len() as i32
     }
 }
 

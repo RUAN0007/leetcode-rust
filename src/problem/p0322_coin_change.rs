@@ -48,29 +48,58 @@ pub struct Solution {}
 
 impl Solution {
     pub fn coin_change(mut coins: Vec<i32>, amount: i32) -> i32 {
-        let k_large = 100000;
-        coins.sort();
-        let amount = amount as usize;
-        let mut change_ways = vec![k_large; amount+1];
-        change_ways[0] = 0;
-        for i in 1..=amount {
-            let i = i as usize;
-            for &coin_num in &coins {
-                let coin_num = coin_num as usize;
-                // if i is not changeable from i-1, i-2 and i-5, 
-                //   change_ways[i] will still be greater than k_large due to the min op. 
-                if coin_num <= i {
-                    change_ways[i] = std::cmp::min(change_ways[i], change_ways[i-coin_num]+1);
+        let amount : usize = amount as usize;
+        let mut result : Vec<Vec<i32>> = vec![vec![-1;amount+1];coins.len()+1];
+        // result[i][j] represent the ways to make amount i with the first j coins. 
+
+        result[0][0] = 0;
+        for i in 1..=coins.len() {
+            result[i][0] = 0;
+            for j in 1..=amount {
+                let this_coin : usize = coins[i-1] as usize;
+
+                //make up only using the first i-1 coints.
+                if result[i-1][j] != -1 {
+                    result[i][j] = result[i-1][j];
                 }
-                // println!("{:?}", change_ways);
+
+                if this_coin <= j && result[i][j-this_coin] != -1 {
+                    if result[i][j] != -1 {
+                        result[i][j] = std::cmp::min(result[i][j], 1 + result[i][j-this_coin]);
+                    } else {
+                        result[i][j] = 1 + result[i][j-this_coin];
+                    }
+                }
             }
         }
-        if change_ways[amount] >= k_large {
-            -1
-        } else {
-            change_ways[amount]
-        }
+        // println!("result={:?}", result);
+        result[coins.len()][amount]
     }
+
+    // pub fn coin_change_old(mut coins: Vec<i32>, amount: i32) -> i32 {
+    //     let k_large = 100000;
+    //     coins.sort();
+    //     let amount = amount as usize;
+    //     let mut change_ways = vec![k_large; amount+1];
+    //     change_ways[0] = 0;
+    //     for i in 1..=amount {
+    //         let i = i as usize;
+    //         for &coin_num in &coins {
+    //             let coin_num = coin_num as usize;
+    //             // if i is not changeable from i-1, i-2 and i-5, 
+    //             //   change_ways[i] will still be greater than k_large due to the min op. 
+    //             if coin_num <= i {
+    //                 change_ways[i] = std::cmp::min(change_ways[i], change_ways[i-coin_num]+1);
+    //             }
+    //             // println!("{:?}", change_ways);
+    //         }
+    //     }
+    //     if change_ways[amount] >= k_large {
+    //         -1
+    //     } else {
+    //         change_ways[amount]
+    //     }
+    // }
 }
 
 // submission codes end
