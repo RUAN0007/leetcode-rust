@@ -184,15 +184,23 @@ Suitable for problems where solutions are within in a range and the tentative so
 # Handy code to produce a mapped index, like [0,2,4,1,3,5] or [0,2,4,1,3]
 (0..(n+1)/2).map(|x|{2*x}).collect(); // [0,2,4] when n=5 or 6.
 (0..n/2).map(|x|{2*x}).collect(); // [1,3] when n=5, or [1,3,5] when n=6.
-In [1,3,5,0,4] or [1,3,5,0,2,4], every consecutive three are not adjacent. 
+In [1,3,0,2,4] or [1,3,5,0,2,4], every consecutive 3 are not adjacent. 
 ```
 * [324. Wiggle Sort II](src/problem/p0324_wiggle_sort_ii.rs)
 * [767. Reorganize String](src/problem/p0767_reorganize_string.rs)
 
 ## Matrix Traversal
 ### Spiral
-### Left Diagonal
-### Right Diagonal
+* [54. Spiral Matrix](src/problem/p0054_spiral_matrix.rs)
+* [885. Spiral Matrix III](src/problem/p0885_spiral_matrix_iii.rs)
+### Diagonal
+* [498. Diagonal Traverse](src/problem/p0498_diagonal_traverse.rs)
+* [1424. Diagonal Traverse II](src/problem/p1424_diagonal_traverse_ii.rs)
+
+## Bit Operation
+## 2 Pointer
+## Array/String
+## DP
 ## Others
 * [42. Trapping Rain Water](src/problem/p0042_trapping_rain_water.rs)
 ### Palindrome Series

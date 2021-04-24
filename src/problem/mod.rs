@@ -170,3 +170,5 @@ mod p1092_shortest_common_supersequence;
 mod p0216_combination_sum_iii;
 mod p0212_word_search_ii;
 mod p0875_koko_eating_bananas;
+mod p0498_diagonal_traverse;
+mod p1424_diagonal_traverse_ii;

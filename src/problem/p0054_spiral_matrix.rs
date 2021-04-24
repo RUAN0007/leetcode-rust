@@ -32,8 +32,8 @@ pub struct Solution {}
 impl Solution {
     pub fn spiral_order(matrix: Vec<Vec<i32>>) -> Vec<i32> {
         let mut result = vec![];
-        let row_count = matrix.len();
-        let col_count = matrix[0].len();
+        let row_count = matrix.len() as i32;
+        let col_count = matrix[0].len() as i32;
 
         let mut top = 0i32;
         let mut bottom = (row_count - 1) as i32;
@@ -41,35 +41,40 @@ impl Solution {
         let mut right = (col_count - 1) as i32;
 
         loop { 
-            // println!("A top={}, bottom={}, left={}, right={}", top, bottom, left, right);
             for j in left..=right {
                 result.push(matrix[top as usize][j as usize]);
             }
-            top += 1;
-            if left > right || top > bottom {
+            // if left > right || top > bottom {
+            //     break;
+            // }
+            if result.len() as i32 == row_count * col_count {
                 break;
             }
+            top += 1;
 
-            // println!("B top={}, bottom={}, left={}, right={}", top, bottom, left, right);
             for i in top..=bottom {
                 result.push(matrix[i as usize][right as usize]);
             }
-            right-=1;
-            if left > right || top > bottom {break}
+            if result.len() as i32 == row_count * col_count {
+                break;
+            }
+            right -= 1;
 
-            // println!("C top={}, bottom={}, left={}, right={}", top, bottom, left, right);
             for j in (left..=right).rev() {
                 result.push(matrix[bottom as usize][j as usize]);
             }
-            bottom -=1;
-            if left > right || top > bottom {break}
+            if result.len() as i32 == row_count * col_count {
+                break;
+            }
+            bottom-=1;
 
-            // println!("D top={}, bottom={}, left={}, right={}", top, bottom, left, right);
             for i in (top..=bottom).rev() {
                 result.push(matrix[i as usize][left as usize]);
             }
-            left+=1;
-            if left > right || top > bottom {break}
+            if result.len() as i32 == row_count * col_count {
+                break;
+            }
+            left +=1;
         }
         result
     }
