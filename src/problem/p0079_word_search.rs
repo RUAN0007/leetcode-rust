@@ -40,87 +40,32 @@ pub struct Solution {}
 // discuss: https://leetcode.com/problems/word-search/discuss/?currentPage=1&orderBy=most_votes&query=
 
 // submission codes start here
-
+use std::collections::HashSet;
 impl Solution {
-    pub fn visited(route: &mut Vec<(usize, usize)>, pos: (usize, usize)) -> bool {
-        let (this_row, this_col) = pos;
-        for &mut(prev_row, prev_col) in route {
-            if prev_row == this_row && prev_col == this_col {
-                return true;
-            }
-        }
-        false
-    }
-
-    pub fn track(board: &Vec<Vec<char>>, route: &mut Vec<(usize, usize)>, word: &String, pos: usize) -> bool {
-        if word.len() == pos {
-            return true;
-        }
-
-        let target_char = word.chars().nth(pos).unwrap();
-        let &(prev_row, prev_col) = route.last().unwrap();
-        let mut potential_pos = vec![];
-
-        // up
-        if 0 < prev_row {
-            let cur_row = prev_row - 1;
-            let cur_col = prev_col;
-            let cur_pos = (cur_row, cur_col);
-            if board[cur_row][cur_col] == target_char && !Self::visited(route, cur_pos){
-                potential_pos.push(cur_pos);
-            }
-        } 
-
-        // left
-        if 0 < prev_col {
-            let cur_row = prev_row;
-            let cur_col = prev_col - 1;
-            let cur_pos = (cur_row, cur_col);
-            if board[cur_row][cur_col] == target_char && !Self::visited(route, cur_pos){
-                potential_pos.push(cur_pos);
-            }
+    pub fn track(board: &Vec<Vec<char>>, i : i32, j : i32, target : &String, visited: &mut HashSet<(i32,i32)>) -> bool{
+        if target.len() == 0 {return true;}
+        let target_char : char = target.chars().nth(0).unwrap();
+        let row_count : i32 = board.len() as i32;
+        let col_count : i32 = board[0].len() as i32;
+        let mut found = false;
+        if (!visited.contains(&(i,j)) && 0 <= i  && i < row_count && 0 <= j && j < col_count && board[i as usize][j as usize] == target_char) {
+            let next_target : String = String::from(&target[1..]);
+            visited.insert((i,j));
+            found = Self::track(board, i-1, j, &next_target, visited) ||
+            Self::track(board, i+1, j, &next_target, visited) ||
+            Self::track(board, i, j-1, &next_target, visited) ||
+            Self::track(board, i, j+1, &next_target, visited);
+            visited.remove(&(i,j));
         }
 
-        // down
-        let row_count = board.len();
-        if prev_row < row_count - 1 {
-            let cur_row = prev_row + 1;
-            let cur_col = prev_col;
-            let cur_pos = (cur_row, cur_col);
-            if board[cur_row][cur_col] == target_char && !Self::visited(route, cur_pos){
-                potential_pos.push(cur_pos);
-            }
-        }
-
-        // right
-        let col_count = board[0].len();
-        if prev_col < col_count - 1 {
-            let cur_row = prev_row;
-            let cur_col = prev_col + 1;
-            let cur_pos = (cur_row, cur_col);
-            if board[cur_row][cur_col] == target_char && !Self::visited(route, cur_pos){
-                potential_pos.push(cur_pos);
-            }
-        }
-
-        for (cur_row, cur_col) in potential_pos {
-            route.push((cur_row, cur_col));
-            if Self::track(board, route, word, pos+1) {
-                return true;
-            }
-            route.pop();
-        }
-
-        false
+        found
     }
 
     pub fn exist(board: Vec<Vec<char>>, word: String) -> bool {
-        let first_char = word.chars().nth(0).unwrap();
-        for (row_idx, row) in board.iter().enumerate() {
-            for (col_idx, &this_char) in row.iter().enumerate() {
-                if  this_char == first_char && Self::track(&board, &mut vec![(row_idx, col_idx)], &word, 1) {
-                   return true; 
-                }
+        for i in 0..board.len() {
+            for j in 0..board[0].len() {
+                let mut visited = HashSet::new();
+                if Self::track(&board, i as i32, j as i32, &word, &mut visited) {return true;}
             }
         }
 
