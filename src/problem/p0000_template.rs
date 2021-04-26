@@ -524,6 +524,34 @@ impl BitOp {
         // println!("{:#032b}", x);
         x
     }
+
+    pub fn is_power_of_2(x : u32) -> bool {
+        x & (x-1) == 0
+    }
+
+    pub fn add(mut a : u32, mut b : u32) -> u32 {
+        while b != 0 {
+           let carry = a & b;
+           a = a ^ b;
+           b = carry << 1;
+        }
+        a
+    }
+
+    pub fn divide(mut dividend : u32, divisor : u32) -> u32 {
+        let mut answer = 0u32;
+        while dividend >= divisor {
+            let mut base = divisor;
+            let mut cur_answer = 1u32;
+            while dividend >= base << 1 {
+                base = base << 1;
+                cur_answer = cur_answer << 1;
+            }
+            answer |= cur_answer;
+            dividend -= base;
+        }
+        answer
+    }
 }
 #[derive(Debug, Clone, Copy)]
 struct StrUtil{} 
@@ -1382,6 +1410,15 @@ mod tests {
         assert_eq!(BitOp::lsb1_power(6), 2);
         assert_eq!(BitOp::lsb1_power(7), 1);
         assert_eq!(BitOp::lsb1_power(8), 8);
+        assert!(BitOp::is_power_of_2(8));
+        assert!(!BitOp::is_power_of_2(7));
+        assert_eq!(BitOp::add(0,5), 5);
+        assert_eq!(BitOp::add(3,5), 8);
+        assert_eq!(BitOp::add(3,15), 18);
+        assert_eq!(BitOp::divide(3,15), 0);
+        assert_eq!(BitOp::divide(15,15), 1);
+        assert_eq!(BitOp::divide(15,3), 5);
+        assert_eq!(BitOp::divide(15,4), 3);
     }
     #[test]
     fn test_heap() {

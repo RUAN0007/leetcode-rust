@@ -36,17 +36,14 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-    pub fn reverse_bits(mut x: u32) -> u32 {
-        let mut result = 0;
-        let mut count = 0usize;
-        while x != 0 {
-            let last_digit = x & 1;
-            result = (result << 1) + last_digit;
-            x = x >> 1;
-            count+=1;
-            // println!("x={}, last_digit={}, count={}, result={:#032b}", x, last_digit, count, result);
+    pub fn reverse_bits(x: u32) -> u32 {
+        let mut result : u32 = 0;
+        for i in 0..32 {
+            if x & (1 << i) != 0 {
+                result |= 1 << (32 - 1 - i);
+            }
         }
-        result << (32 - count)
+        result
     }
 }
 
