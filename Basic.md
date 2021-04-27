@@ -198,13 +198,66 @@ In [1,3,0,2,4] or [1,3,5,0,2,4], every consecutive 3 are not adjacent.
 * [1424. Diagonal Traverse II](src/problem/p1424_diagonal_traverse_ii.rs)
 
 ## Bit Operation
-## 2 Pointer
+### Basics
+* [190. Reverse Bits](src/problem/p0190_reverse_bits.rs) (Repeatedly test and set)
+* [191. Number of 1 Bits](src/problem/p0191_number_of_1_bits.rs) (Use x&=x-1 to repeatively unset the least significant 1-bit. )
+* [693. Binary Number with Alternating Bits](src/problem/p0693_binary_number_with_alternating_bits.rs) (Use x&(x+1)==0 to check whether x=(2^n-1))
+* [137. Single Number II](src/problem/p0260_single_number_ii.rs) (Find the single unique elements that appear k times, while the rest with n times. )
+  * Implement a cyclic counter with period n for each bit when xoring elements
+  * Return i-th bit counter if the i-th bit is set in binary k. 
+* [260. Single Number III](src/problem/p0260_single_number_iii.rs) (Find the two unique elements, (x,y) that appear k (k is odd) times, while the rest with n times. )
+  * Implement a cyclic counter with period n for each bit when xoring elements
+  * Locate any i-th bit counter, which is none-zero.(x,y differs in i-th bit).
+  * Separate all elements into two groups by i-th bit and redo p137 to discovery x and y. 
+* [29. Divide Two Integers](src/problem/p0029_divide_two_integers.rs)
+* [371. Sum of Two Integers](src/problem/p0371_sum_of_two_integers.rs)
+* [201. Bitwise AND of Numbers Range](src/problem/p0201_bitwise_and_of_numbers_range.rs)
+
+
+## Two-Pointer
 ## Array/String
 ## DP
-## Others
-* [42. Trapping Rain Water](src/problem/p0042_trapping_rain_water.rs)
-### Palindrome Series
+## Series
+### Palindrome
+```
 NOTE: DP recursion for palindrome
+is_palindrome(i,j) |= is_palindrome(k,j-1) && s[k-1] == s[j] for any k
+```
+
+* [5. Longest Palindromic Substring](src/problem/p0005_longest_palindromic_substring.rs)
+### Stocks Trading
+Key recursion: 
+```
+// no_stock_balances[i][k] represents the max balance at the end of i-th day with at most k txns, conditioned on no stock hold
+// with_stock_balances[i][k] represents the max balance at the end of i-th day with at most k txns, conditioned on stocks holded
+no_stock_balances[i<=0][*]=0; // initial condition
+no_stock_balances[*][k=0]=0; // initial condition
+with_stock_balances[*][k=0]=MIN; // imply N.A. to work with the below max operation
+
+// sell
+no_stock_balances[i][k] = max(no_stock_balances[i-1][k], with_stock_balances[i-1][k] + prices[i])
+// buy
+with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i-1][k-1] - prices[i])
+```
+
+* [121. Best Time to Buy and Sell Stock](src/problem/p0121_best_time_to_buy_and_sell_stock.rs) (k=1)
+  * Enumerate k dimension with named variables.
+  * Always replace no_stock_balances[i-1][k-1] with 0 as k=1
+* [122. Best Time to Buy and Sell Stock II](src/problem/p0122_best_time_to_buy_and_sell_stock_ii.rs) (k=inf)
+  * Due inf, no_stock_balances[\*][k]=no_stock_balances[\*][k-1], and similar to with_stock_balances. Hence, the dimension for k can be removed. 
+* [188. Best Time to Buy and Sell Stock IV](src/problem/p0188_best_time_to_buy_and_sell_stock_iv.rs) (Arbitrary k)
+  * Minor Optimization: since a txn must span at least two days, one day to buy and one day to sell, when k >n/2, it is equivalent to k = inf. 
+* [714. Best Time to Buy and Sell Stock with Transaction Fee](src/problem/p0714_best_time_to_buy_and_sell_stock_with_transaction_fee.rs)
+  * Similar to [P122](src/problem/p0122_best_time_to_buy_and_sell_stock_ii.rs).
+  * Can pay the fee either during the buy or the sell. 
+* [309. Best Time to Buy and Sell Stock with Cooldown](src/problem/p0309_best_time_to_buy_and_sell_stock_with_cooldown.rs) (cool down with inf k)
+  * with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[**i-2**][k-1] - prices[i])
+
+
+## Others
+* [229. Majority Element II](src/problem/p0229_majority_element_ii.rs)
+  * (B-M Majority Vote)
+* [42. Trapping Rain Water](src/problem/p0042_trapping_rain_water.rs)
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
     * BtreeMap

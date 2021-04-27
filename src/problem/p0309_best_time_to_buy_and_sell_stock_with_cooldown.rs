@@ -35,6 +35,23 @@ pub struct Solution {}
 
 impl Solution {
     pub fn max_profit(prices: Vec<i32>) -> i32 {
+        let mut last_no_stock_balance : i32 = 0;
+        let mut last_with_stock_balance : i32 = -2_147_483_648i32;
+        let mut sec_last_no_stock_balance : i32 = 0;
+
+        for price in prices.iter() {
+            let last_no_stock_balance_cache = last_no_stock_balance;
+
+            last_no_stock_balance = std::cmp::max(last_no_stock_balance, last_with_stock_balance + price);
+
+            last_with_stock_balance = std::cmp::max(last_with_stock_balance, sec_last_no_stock_balance - price);
+
+            sec_last_no_stock_balance = last_no_stock_balance_cache;
+        }
+        last_no_stock_balance
+    }
+
+    pub fn max_profit1(prices: Vec<i32>) -> i32 {
         // max_profits[i] when holding the stock at i-th day 
         let mut profits_hold = vec![0;prices.len()];
         // max_profits[i] when not holding the stock at i-th day and not selling at (i-1) day. 

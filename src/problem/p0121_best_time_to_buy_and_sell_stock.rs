@@ -34,6 +34,17 @@ pub struct Solution {}
 
 impl Solution {
     pub fn max_profit(prices: Vec<i32>) -> i32 {
+        let mut last_no_stock_balance = 0i32;
+        let mut last_with_stock_balance = -2_147_483_648i32;
+        for &price in prices.iter() {
+            last_no_stock_balance = std::cmp::max(last_no_stock_balance, last_with_stock_balance + price);
+
+            last_with_stock_balance = std::cmp::max(last_with_stock_balance, 0 - price);
+        }
+        last_no_stock_balance
+    }
+
+    pub fn max_profit1(prices: Vec<i32>) -> i32 {
         // kadane's alg on consecutive diff. 
         let mut max_so_far = 0;
         let mut cur_max = 0;
