@@ -179,3 +179,8 @@ mod p0188_best_time_to_buy_and_sell_stock_iv;
 mod p0123_best_time_to_buy_and_sell_stock_iii;
 mod p0122_best_time_to_buy_and_sell_stock_ii;
 mod p0714_best_time_to_buy_and_sell_stock_with_transaction_fee;
+mod p0004_median_of_two_sorted_arrays;
+mod p0010_regular_expression_matching;
+mod p0030_substring_with_concatenation_of_all_words;
+mod p0032_longest_valid_parentheses;
+mod p0037_sudoku_solver;

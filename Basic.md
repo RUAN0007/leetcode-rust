@@ -42,6 +42,7 @@ Extremely powerful for leftmost/rightmost smaller/greater problems in an array.
 
 
 ## Recursions
+Hint: provide a _level_ parameter in each recursive call. Prefix `let level_padding : String = (0..level).map(|_|{"  "}).collect();` in each print message for a clear format. 
 ### Path Searching
 * [79. Word Search](src/problem/p0079_word_search.rs)
 * [212. Word Search II](src/problem/p0212_word_search_ii.rs)
