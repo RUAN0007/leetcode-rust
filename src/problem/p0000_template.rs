@@ -595,6 +595,36 @@ impl StrUtil {
         // Allocate new memory and store the modified string there
         let bob: String = alice.replace("dog", "cat");
 
+        let ascii = 'a';
+        let uppercase_a = 'A';
+        let uppercase_g = 'G';
+        let a = 'a';
+        let g = 'g';
+        let zero = '0';
+        let percent = '%';
+        let space = ' ';
+        let lf = '\n';
+        let esc: char = 0x1b_u8.into();
+        assert!(ascii.is_ascii());
+
+        assert!(uppercase_a.is_ascii_alphabetic());
+        assert!(!zero.is_ascii_alphabetic());
+
+        assert!(zero.is_ascii_alphanumeric());
+        assert!(!percent.is_ascii_alphanumeric());
+
+        assert!(!space.is_ascii_control());
+        assert!(lf.is_ascii_control());
+
+        assert!(zero.is_ascii_digit());
+        assert!(!percent.is_ascii_digit());
+
+        assert!(g.is_ascii_lowercase());
+        assert!(!zero.is_ascii_lowercase());
+
+        assert!(!zero.is_ascii_punctuation());
+        assert!(percent.is_ascii_punctuation());
+
     }
 }
 

@@ -215,9 +215,6 @@ In [1,3,0,2,4] or [1,3,5,0,2,4], every consecutive 3 are not adjacent.
 * [201. Bitwise AND of Numbers Range](src/problem/p0201_bitwise_and_of_numbers_range.rs)
 
 
-## Two-Pointer
-## Array/String
-## DP
 ## Series
 ### Palindrome
 ```
@@ -259,6 +256,17 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
 * [229. Majority Element II](src/problem/p0229_majority_element_ii.rs)
   * (B-M Majority Vote)
 * [42. Trapping Rain Water](src/problem/p0042_trapping_rain_water.rs)
+  * Math Modeling
+* [4. Median of Two Sorted Arrays](src/problem/p0004_median_of_two_sorted_arrays.rs)
+  * Off-one error
+* [60. Permutation Sequence](src/problem/p0060_permutation_sequence.rs)
+  * Off-one error
+* [68. Text Justification](src/problem/p0068_text_justification.rs)
+  * Engineeringly Complex
+* [65. Valid Number](src/problem/p0065_valid_number.rs)
+  * Engineeringly Complex
+* [85. Maximal Rectangle](src/problem/p0085_maximal_rectangle.rs)
+  * Similar to [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs), solved with monotonic stack. 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
     * BtreeMap
