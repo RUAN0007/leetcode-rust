@@ -267,6 +267,12 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Engineeringly Complex
 * [85. Maximal Rectangle](src/problem/p0085_maximal_rectangle.rs)
   * Similar to [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs), solved with monotonic stack. 
+* [87. Scramble String](src/problem/p0087_scramble_string.rs)
+  * Bottom-up approach with the increment on the substring length
+* [135. Candy](src/problem/p0135_candy.rs)
+  * Smart tricks
+* [149. Max Points on a Line](src/problem/p0149_max_points_on_a_line.rs)
+  * Smart tricks: for each point Pi, count other points which share the identical slope with respect to Pi. 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
     * BtreeMap

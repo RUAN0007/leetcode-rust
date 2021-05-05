@@ -625,6 +625,7 @@ impl StrUtil {
         assert!(!zero.is_ascii_punctuation());
         assert!(percent.is_ascii_punctuation());
 
+        assert_eq!(vec!["a".to_owned(), "b".to_owned()].join("-"), "a-b".to_owned());
     }
 }
 
@@ -1099,6 +1100,11 @@ impl ListUtil {
         //Since mutable references can not move a variable completely or partially, we have to use take() to retrieve the next node, while leaving Null the original next field. 
         node.as_mut().unwrap().next = node.as_mut().unwrap().next.as_mut().unwrap().next.take();
     }
+}
+
+struct MathUtil{} 
+impl MathUtil {
+    pub fn gcd(a:i32, b:i32) -> i32 {if b==0 {a} else {Self::gcd(b, a%b)}}
 }
 
 struct BacktrackUtil{} 
