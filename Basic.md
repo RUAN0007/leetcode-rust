@@ -273,6 +273,23 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Smart tricks
 * [149. Max Points on a Line](src/problem/p0149_max_points_on_a_line.rs)
   * Smart tricks: for each point Pi, count other points which share the identical slope with respect to Pi. 
+* [212. Word Search II](src/problem/p0212_word_search_ii.rs)
+  * Build and employ the trie during DFS traversal. 
+* [218. The Skyline Problem](src/problem/p0218_the_skyline_problem.rs)
+  * Collect critical points, which the top-left and top-right point of each rectangle. 
+  * Sort the critical points based on point x-coordinate, left or right, and height. (Details commented in code. )
+  * Iterate the critical points:
+    * If top-left: 
+      * Add the corresponding rectangle to active ones
+      * If it increases the max height of the active rectangle: update result
+    * IF top-right: 
+      * Remove the corresponding rectangle in active ons
+      * If it reduces the max height, update the result
+  (Active rectangles can be maintained as a max-heap. )
+* [233. Number of Digit One](src/problem/p0233_number_of_digit_one.rs)
+  * Smart Tricks (To review)
+* [282. Expression Add Operators](src/problem/p0282_expression_add_operators.rs)
+  * Leverage stacks to compute the expression with operation precedence, e.g, multiplication is over addition. 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
     * BtreeMap

@@ -27,49 +27,80 @@
  * 	All the strings of words are unique.
  * 
  */
-pub struct Solution {}
 
 // problem: https://leetcode.com/problems/word-search-ii/
 // discuss: https://leetcode.com/problems/word-search-ii/discuss/?currentPage=1&orderBy=most_votes&query=
 
 // submission codes start here
-use std::collections::HashSet;
-impl Solution {
-    // TODO: timeout in larger test cases. 
-    // Need to optimize with trie. 
-    pub fn track(board: &Vec<Vec<char>>, i : i32, j : i32, target : &String, visited: &mut HashSet<(i32,i32)>) -> bool{
-        if target.len() == 0 {return true;}
-        let target_char : char = target.chars().nth(0).unwrap();
-        let row_count : i32 = board.len() as i32;
-        let col_count : i32 = board[0].len() as i32;
-        let mut found = false;
-        if (!visited.contains(&(i,j)) && 0 <= i  && i < row_count && 0 <= j && j < col_count && board[i as usize][j as usize] == target_char) {
-            let next_target : String = String::from(&target[1..]);
-            visited.insert((i,j));
-            found = Self::track(board, i-1, j, &next_target, visited) ||
-            Self::track(board, i+1, j, &next_target, visited) ||
-            Self::track(board, i, j-1, &next_target, visited) ||
-            Self::track(board, i, j+1, &next_target, visited);
-            visited.remove(&(i,j));
-        }
+pub struct TrieNode{
+    branches : Vec<Option<Box<TrieNode>>>,
+    word: Option<String>,
+}
 
-        found
+impl TrieNode {
+    pub fn new_node() -> TrieNode {
+        TrieNode{
+            branches: (0..26).map(|_| None).collect(),
+            word : None,
+        }
     }
 
-    pub fn find_words(board: Vec<Vec<char>>, words: Vec<String>) -> Vec<String> {
-        let mut result = HashSet::new();
-        for i in 0..board.len() {
-            for j in 0..board[0].len() {
-                for word in words.iter() {
-                    if result.contains(word) {continue;}
-                    let mut visited = HashSet::new();
-                    if Self::track(&board, i as i32, j as i32, word, &mut visited) {
-                        result.insert(word.clone());
-                    }
+    pub fn build_trie(words : &Vec<String>) -> TrieNode {
+        let mut root = Self::new_node();
+        for word in words.iter() {
+            let mut node_ptr = &mut root;
+            for word_char in word.chars() {
+                let pos : usize = (word_char as u8 - 'a' as u8) as usize;
+                if node_ptr.branches[pos].is_none() {
+                    node_ptr.branches[pos] = Some(Box::new(TrieNode::new_node()));
                 }
+                node_ptr =  node_ptr.branches[pos].as_mut().unwrap();
             }
+            node_ptr.word = Some(word.clone());
+        }
+        root
+    }
+}
+
+use std::collections::HashSet;
+pub struct Solution {}
+impl Solution {
+    pub fn track(board: &mut Vec<Vec<char>>, i : i32, j : i32, cur_node : &TrieNode, found : &mut HashSet<String> ) {
+        let row_count : i32 = board.len() as i32;
+        let col_count : i32 = board[0].len() as i32;
+        if cur_node.word.is_some() {
+            found.insert(cur_node.word.as_ref().unwrap().clone());
         }
 
+        if (0 <= i  && i < row_count && 0 <= j && j < col_count && board[i as usize][j as usize] != '#' ) {
+            let this_char : char = board[i as usize][j as usize];
+            let char_idx : usize = (this_char as u8 - 'a' as u8) as usize;
+            if cur_node.branches[char_idx].is_some() {
+                let next_node : &TrieNode = cur_node.branches[char_idx].as_ref().unwrap();
+                board[i as usize][j as usize] = '#';
+                Self::track(board, i-1, j, next_node, found);
+                Self::track(board, i+1, j, next_node, found);
+                Self::track(board, i, j-1, next_node, found);
+                Self::track(board, i, j+1, next_node, found);
+                board[i as usize][j as usize] = this_char;
+            }
+
+        }
+
+    }
+
+    pub fn find_words(mut board: Vec<Vec<char>>, words: Vec<String>) -> Vec<String> {
+        let trie : TrieNode = TrieNode::build_trie(&words);
+
+        let mut result : HashSet<String> = HashSet::new();
+        for i in 0..board.len() {
+            for j in 0..board[0].len() {
+                Self::track(&mut board, i as i32, j as i32, &trie, &mut result);
+            }
+        }
+        // let i = 1usize;
+        // let j = 3usize;
+        // Self::track(&mut board, i as i32, j as i32, &trie, &mut result);
         result.into_iter().collect()
     }
 }
@@ -84,6 +115,6 @@ mod tests {
     fn test_212() {
         let board = vec![vec!['o','a','a','n'],vec!['e','t','a','e'],vec!['i','h','k','r'],vec!['i','f','l','v']];
         let words = vec!["oath".to_owned(),"pea".to_owned(),"eat".to_owned(),"rain".to_owned()];
-        assert_eq!(Solution::find_words(board, words), vec!["eat","oath"]);
+        assert_eq!(Solution::find_words(board, words), vec!["oath","eat"]);
     }
 }

@@ -727,6 +727,15 @@ struct VecUtil{}
 impl VecUtil {
     pub fn sort(v : &mut Vec<i32>) {
        v.sort_by(|a : &i32,b: &i32|{a.cmp(b)});
+       v.sort_by(|a,b|{
+        if a < b {
+            return std::cmp::Ordering::Less;
+        } else if a == b {
+            return std::cmp::Ordering::Equal;
+        } else {
+            return std::cmp::Ordering::Greater;
+        }
+    });
     }
 
     pub fn range2vec(from_inclusive: i32, to_exclusive : i32) -> Vec<i32> {
@@ -1031,6 +1040,7 @@ impl Util {
         let op_ref : Option<&i32> = op.as_ref();
         let op_mref : Option<&mut i32> = op.as_mut();
         let op1 : Option<i32> = op.take(); // now op is None
+        let none_vec : Vec<Option<i32>> = (0..26).map(|_| None).collect();
     }
 
     pub fn input() {
@@ -1105,6 +1115,14 @@ impl ListUtil {
 struct MathUtil{} 
 impl MathUtil {
     pub fn gcd(a:i32, b:i32) -> i32 {if b==0 {a} else {Self::gcd(b, a%b)}}
+    pub fn checked_op(a : i32, b : i32) -> Option<i32>{
+        a.checked_mul(b)
+    }
+
+    pub fn multi(a : i32, b : i32) {
+        i32::pow(a,b as u32);
+        usize::pow(a as usize,b as u32);
+    }
 }
 
 struct BacktrackUtil{} 
