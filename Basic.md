@@ -290,6 +290,8 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Smart Tricks (To review)
 * [282. Expression Add Operators](src/problem/p0282_expression_add_operators.rs)
   * Leverage stacks to compute the expression with operation precedence, e.g, multiplication is over addition. 
+* [295. Find Median from Data Stream](src/problem/p0295_find_median_from_data_stream.rs)
+  * Maintain two data structures: the max heap for the smaller half the min heap for the greater half. 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
     * BtreeMap

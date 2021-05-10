@@ -317,7 +317,7 @@ impl BinarySearch {
 // Use vector to represent a heap so that any element can be randomly accessed, but the element count must be fixed. 
 use  std::cmp::Ordering;
 #[derive(Debug)]
-struct VecHeap<K: Clone + Hash + Eq, W:Ord + Clone, V: Clone>{
+pub struct VecHeap<K: Clone + Hash + Eq, W:Ord + Clone, V: Clone>{
     elements: Vec<(K,W,V)>,
     key2idx: HashMap<K, usize>,
 } 
@@ -382,11 +382,17 @@ impl<K: Clone + Hash + Eq, W:Ord + Clone, V: Clone> VecHeap<K,W,V>{
         }
     }
 
-    pub fn insert(&mut self, key: K, weight: W, value: V) {
-        let last_pos = self.elements.len();
-        self.key2idx.insert(key.clone(), last_pos);
-        self.elements.push((key, weight, value));
-        self.bottomup_heapify(last_pos)
+    pub fn insert(&mut self, key: K, weight: W, value: V) -> bool {
+        if self.key2idx.get(&key).is_none() {
+            let last_pos = self.elements.len();
+            self.key2idx.insert(key.clone(), last_pos);
+            self.elements.push((key, weight, value));
+            self.bottomup_heapify(last_pos);
+            true
+        } else {
+            false
+        }
+
     }
 
     pub fn bottomup_heapify(&mut self, start_pos : usize) {

@@ -203,3 +203,5 @@ mod p0224_basic_calculator;
 mod p0233_number_of_digit_one;
 mod p0273_integer_to_english_words;
 mod p0282_expression_add_operators;
+mod p0295_find_median_from_data_stream;
+mod p0297_serialize_and_deserialize_binary_tree;
