@@ -775,6 +775,10 @@ impl VecUtil {
             .skip(5) // skip the previous 5 elements
             .filter(|x : &i32|{*x < 50}) // filter by a predicate
             .take(10).collect(); // only consider the first 10.
+        
+        let _filter_by_idx : Vec<i32> = processed.iter().enumerate().filter(|&(idx, _)|{idx != 1}).map(|(_, &v)|{v}).collect();
+
+
         let e1 : Option<&i32> = processed.iter().next();
         let e10 : Option<&i32> = processed.iter().nth(10);
         let last : Option<&i32> = processed.iter().last();

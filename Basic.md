@@ -269,6 +269,7 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Similar to [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs), solved with monotonic stack. 
 * [87. Scramble String](src/problem/p0087_scramble_string.rs)
   * Bottom-up approach with the increment on the substring length
+  * To redo and review with top-down approach with memoization.
 * [135. Candy](src/problem/p0135_candy.rs)
   * Smart tricks
 * [149. Max Points on a Line](src/problem/p0149_max_points_on_a_line.rs)
@@ -292,6 +293,13 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Leverage stacks to compute the expression with operation precedence, e.g, multiplication is over addition. 
 * [295. Find Median from Data Stream](src/problem/p0295_find_median_from_data_stream.rs)
   * Maintain two data structures: the max heap for the smaller half the min heap for the greater half. 
+* [301. Remove Invalid Parentheses](src/problem/p0301_remove_invalid_parentheses.rs)
+  * Recursion with duplicates.
+  * For each collected results after one round of recursion, do another round of recursion. 
+* [312. Burst Balloons](src/problem/p0312_burst_balloons.rs)
+  * Top-down DP with tricks: start recursion from the last bursted balloon, so that the left and right balloon are known. 
+  * Similar to [87. Scramble String](src/problem/p0087_scramble_string.rs)
+
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
     * BtreeMap

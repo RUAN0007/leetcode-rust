@@ -205,3 +205,5 @@ mod p0273_integer_to_english_words;
 mod p0282_expression_add_operators;
 mod p0295_find_median_from_data_stream;
 mod p0297_serialize_and_deserialize_binary_tree;
+mod p0301_remove_invalid_parentheses;
+mod p0312_burst_balloons;
