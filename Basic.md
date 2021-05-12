@@ -299,6 +299,12 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
 * [312. Burst Balloons](src/problem/p0312_burst_balloons.rs)
   * Top-down DP with tricks: start recursion from the last bursted balloon, so that the left and right balloon are known. 
   * Similar to [87. Scramble String](src/problem/p0087_scramble_string.rs)
+* [315. Count of Smaller Numbers After Self](src/problem/p0315_count_of_smaller_numbers_after_self.rs)
+  * During the merge sort, count the surpassed right numbers for each left one. 
+* [321. Create Maximum Number](src/problem/p0312_burst_balloons.rs)
+  * Two tricky sub-problems:
+    * Given an array of digits, return k of them in order, to form the greatest number. Use stacks. 
+    * Given two array of digits, merge them while keeping their relative order, to form the greatest number. 
 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:

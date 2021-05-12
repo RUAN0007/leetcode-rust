@@ -207,3 +207,5 @@ mod p0295_find_median_from_data_stream;
 mod p0297_serialize_and_deserialize_binary_tree;
 mod p0301_remove_invalid_parentheses;
 mod p0312_burst_balloons;
+mod p0315_count_of_smaller_numbers_after_self;
+mod p0321_create_maximum_number;
