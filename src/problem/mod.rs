@@ -209,3 +209,5 @@ mod p0301_remove_invalid_parentheses;
 mod p0312_burst_balloons;
 mod p0315_count_of_smaller_numbers_after_self;
 mod p0321_create_maximum_number;
+mod p0327_count_of_range_sum;
+mod p0329_longest_increasing_path_in_a_matrix;

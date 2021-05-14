@@ -305,6 +305,10 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Two tricky sub-problems:
     * Given an array of digits, return k of them in order, to form the greatest number. Use stacks. 
     * Given two array of digits, merge them while keeping their relative order, to form the greatest number. 
+* [327. Count of Range Sum](src/problem/p0327_count_of_range_sum.rs)
+  * Prepare a vector of prefix sum S
+  * For each i, count j > i s.t S\[j\]-S\[i\] within the range
+    * Leverage the MergeSort, similar to [315. Count of Smaller Numbers After Self](src/problem/p0315_count_of_smaller_numbers_after_self.rs).
 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:

@@ -769,6 +769,13 @@ impl VecUtil {
         let e : Option<i32> = q.pop_front();
     }
 
+    pub fn split() {
+        let mut a = vec![1,2,3];
+        let b = a.split_off(1usize);
+        assert_eq!(a, vec![1]);
+        assert_eq!(b, vec![2,3]);
+    }
+
     pub fn iterator_misc() {
         let mut xs = vec![0;100];
         let processed : Vec<i32> = xs.into_iter()
