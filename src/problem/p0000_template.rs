@@ -966,44 +966,36 @@ impl MapUtil {
         map.insert(3, "a".to_owned());
         map.insert(5, "b".to_owned());
         map.insert(8, "c".to_owned());
+
+        use std::ops::Range; // [start, end)
+        use std::ops::RangeInclusive; // [start, end]
+
+        use std::ops::RangeTo; // (-inf, end)
+        use std::ops::RangeToInclusive; // (-inf, end]
+        use std::ops::RangeFrom; // [start, +inf)
+        use std::ops::RangeFull; // [-inf, +inf]
         // key, value typed with &
-        for (key, value) in map.range((Included(&4), Included(&8))) {
-            // println!("{}: {}", key, value);
+        // for (key, value) in map.range(Range{start:3, end:7}) {
+        for (key, value) in map.range(RangeInclusive::new(3, 5)) {
+            println!("{}: {}", key, value);
         }
 
-        for (key, value) in map.range_mut((Included(&4), Included(&8))) {
+        for (key, value) in map.range_mut(RangeFull) {
             // *key = 1; key is always immutable. 
-            *value = "asdf".to_owned();
+            *value = "d".to_owned();
             // println!("{}: {}", key, value);
         }
 
-        // Fast Init
-        let a: HashSet<i32> = [1, 2, 3].iter().cloned().collect();
-        let b: HashSet<i32> = [4, 2, 3, 4].iter().cloned().collect();
+        // last key less 
+        assert_eq!(map.range(RangeTo{end : 5}).next_back(), Some((&3, &"d".to_owned())));
 
-        // Can be seen as `a - b`.
-        // x typed as &
-        for x in a.difference(&b) {
-            // println!("{}", x); // Print 1
-        }
+        // last key less or equal to
+        assert_eq!(map.range(RangeToInclusive{end : 5}).next_back(), Some((&5, &"d".to_owned())));
 
-        let diff: HashSet<i32> = a.difference(&b).cloned().collect();
-        assert_eq!(diff, [1].iter().cloned().collect());
-
-        // Note that difference is not symmetric,
-        // and `b - a` means something else:
-        // no cloned to get a set of reference.
-        let diff: HashSet<&i32> = b.difference(&a).collect();
-        assert_eq!(diff, [4].iter().collect());
-
-        let intersection: HashSet<i32> = a.intersection(&b).cloned().collect();
-        assert_eq!(intersection, [2,3].iter().cloned().collect());
-
-        let union: HashSet<i32> = a.union(&b).cloned().collect();
-        assert_eq!(union, [1,2,3,4].iter().cloned().collect());
-        assert!(!a.is_subset(&b));
-        assert!(!a.is_superset(&b));
-
+        // first key greater or equal to
+        assert_eq!(map.range(RangeFrom{start : 7}).next(), Some((&8, &"d".to_owned())));
+        assert_eq!(map.range(RangeFrom{start : 8}).next(), Some((&8, &"d".to_owned())));
+        assert_eq!(map.range(RangeFrom{start : 9}).next(), None);
     }
 
     pub fn hashset_misc() {
@@ -1047,6 +1039,35 @@ impl MapUtil {
         // first and last
         assert_eq!(set.iter().next(), Some(&3));
         assert_eq!(set.iter().next_back(), Some(&8));
+
+
+        // Fast Init
+        let a: HashSet<i32> = [1, 2, 3].iter().cloned().collect();
+        let b: HashSet<i32> = [4, 2, 3, 4].iter().cloned().collect();
+
+        // Can be seen as `a - b`.
+        // x typed as &
+        for x in a.difference(&b) {
+            // println!("{}", x); // Print 1
+        }
+
+        let diff: HashSet<i32> = a.difference(&b).cloned().collect();
+        assert_eq!(diff, [1].iter().cloned().collect());
+
+        // Note that difference is not symmetric,
+        // and `b - a` means something else:
+        // no cloned to get a set of reference.
+        let diff: HashSet<&i32> = b.difference(&a).collect();
+        assert_eq!(diff, [4].iter().collect());
+
+        let intersection: HashSet<i32> = a.intersection(&b).cloned().collect();
+        assert_eq!(intersection, [2,3].iter().cloned().collect());
+
+        let union: HashSet<i32> = a.union(&b).cloned().collect();
+        assert_eq!(union, [1,2,3,4].iter().cloned().collect());
+        assert!(!a.is_subset(&b));
+        assert!(!a.is_superset(&b));
+
     }
 }
 struct Util(i32, i32);

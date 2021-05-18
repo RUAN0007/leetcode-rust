@@ -269,7 +269,7 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Similar to [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs), solved with monotonic stack. 
 * [87. Scramble String](src/problem/p0087_scramble_string.rs)
   * Bottom-up approach with the increment on the substring length
-  * To redo and review with top-down approach with memoization.
+  * TODO: review with top-down approach with memoization.
 * [135. Candy](src/problem/p0135_candy.rs)
   * Smart tricks
 * [149. Max Points on a Line](src/problem/p0149_max_points_on_a_line.rs)
@@ -309,6 +309,23 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Prepare a vector of prefix sum S
   * For each i, count j > i s.t S\[j\]-S\[i\] within the range
     * Leverage the MergeSort, similar to [315. Count of Smaller Numbers After Self](src/problem/p0315_count_of_smaller_numbers_after_self.rs).
+* [330. Patching Array](src/problem/p0330_patching_array.rs)
+  * Smart Tricks by Recursion: Assume the previous i number can attain \[0,next_miss]),
+    * If num[i] <= next_miss:the range can be augment to [0, next_miss+num[i]) by considering num[i].
+    * Else:pad the array with next_muss to augment into [0, next_miss*2)
+* [335. Self Crossing](src/problem/p0335_self_crossing.rs)
+  * Assume edge i to be first crossed, enumerate three canonical scenarios, in which the edge is crossed by i+4,i+5,and i+6.
+  * Relate the scenario with the edge length conditions.
+* [336. Palindrome Pairs](src/problem/p0336_palindrome_pairs.rs)
+  * Build a trie for the reversed strings
+* [352. Data Stream as Disjoint Intervals](src/problem/p0352_data_stream_as_disjoint_intervals.rs)
+  * Ordered BTree Map
+* [354. Russian Doll Envelopes](src/problem/p0354_russian_doll_envelopes.rs)
+  * Longest Increasing Subsequence
+* [363. Max Sum of Rectangle No Larger Than K](src/problem/p0363_max_sum_of_rectangle_no_larger_than_k.rs)
+  * Two related subproblems: 
+    * Max Sum Submatrix (KaDane's Algorithm)
+    * Subarray with the sum no larger than k (Compute during the Merge Sort, similar to [327. Count of Range Sum](src/problem/p0327_count_of_range_sum.rs))
 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
