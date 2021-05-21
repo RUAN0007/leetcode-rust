@@ -1161,6 +1161,12 @@ impl MathUtil {
         i32::pow(a,b as u32);
         usize::pow(a as usize,b as u32);
     }
+
+    pub fn rand_i32() -> i32{
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+        rng.gen::<i32>()
+    }
 }
 
 struct BacktrackUtil{} 

@@ -270,6 +270,9 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
 * [87. Scramble String](src/problem/p0087_scramble_string.rs)
   * Bottom-up approach with the increment on the substring length
   * TODO: review with top-down approach with memoization.
+* [115. Distinct Subsequences](src/problem/p0115_distinct_subsequences.rs)
+  * TODO: To review
+  * 2D DP. 
 * [135. Candy](src/problem/p0135_candy.rs)
   * Smart tricks
 * [149. Max Points on a Line](src/problem/p0149_max_points_on_a_line.rs)
@@ -326,6 +329,24 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Two related subproblems: 
     * Max Sum Submatrix (KaDane's Algorithm)
     * Subarray with the sum no larger than k (Compute during the Merge Sort, similar to [327. Count of Range Sum](src/problem/p0327_count_of_range_sum.rs))
+* [381. Insert Delete GetRandom O(1)](src/problem/p0381_insert_delete_getrandom_o1_duplicates_allowed.rs)
+  * Trick: a helper `positions : HashMap<i32, HashSet<usize>>` to track the index positions of each value in the array. It facilitates the removal of value in the middle of the array: fill the removed position with the last value in the array and update `positions` accordingly. 
+* [391. Perfect Rectangle](src/problem/p0391_perfect_rectangle.rs)
+  * Classify each point to a subset of four categories, top-left, top-right, bottom-left and bottom-right. A point can belong to multiple distinct types, but not duplicated types. 
+  * Iterate each point for the above classification, validation and identify points in th corner. 
+  * Again iterate each point and validate: if on corner, conforms to corner pattern. If interior, conform to T-pattern or X-pattern.
+  * Trick: 4 digits to encode the point type and identify pattern. 
+* [403. Frog Jump](src/problem/p0403_frog_jump.rs)
+  * Incremental approach
+* [407. Trapping Rain Water II](src/problem/p0407_trapping_rain_water_ii.rs)
+  * The trapped water volume of a unit is determined by the lowest among all the highest units in each path towards the boundary.
+  * Leverage a priority queue. 
+* [420. Strong Password Checker](src/problem/p0420_strong_password_checker.rs)
+  * Mathematically tricky. 
+* [432. All O`one Data Structure](src/problem/p0432_all_oone_data_structure.rs)
+  * Leverage two data structures: 
+    * `frq_lists`, which maps the frequency to the list of elements with the associated frequency. 
+    * `key2frq_list_pos`, which maps the element key to the frequency and the list position. 
 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
