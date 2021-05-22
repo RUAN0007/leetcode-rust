@@ -269,7 +269,7 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Similar to [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs), solved with monotonic stack. 
 * [87. Scramble String](src/problem/p0087_scramble_string.rs)
   * Bottom-up approach with the increment on the substring length
-  * TODO: review with top-down approach with memoization.
+  * Top-down with memoization
 * [115. Distinct Subsequences](src/problem/p0115_distinct_subsequences.rs)
   * TODO: To review
   * 2D DP. 
@@ -345,8 +345,19 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Mathematically tricky. 
 * [432. All O`one Data Structure](src/problem/p0432_all_oone_data_structure.rs)
   * Leverage two data structures: 
-    * `frq_lists`, which maps the frequency to the list of elements with the associated frequency. 
-    * `key2frq_list_pos`, which maps the element key to the frequency and the list position. 
+    * `frq_arrays`, which maps the frequency to the list of elements with the associated frequency. 
+    * `key2frq_array_pos`, which maps the element key to the frequency and the array position. 
+* [440. K-th Smallest in Lexicographical Order](src/problem/p0440_k_th_smallest_in_lexicographical_order.rs)
+  * Leverage a denary tree, as detailed in [here](https://leetcode.com/problems/k-th-smallest-in-lexicographical-order/discuss/92242/ConciseEasy-to-understand-Java-5ms-solution-with-Explaination)
+  * Tricks to calculate the number of children nodes within a parent node, without expanding. 
+* [446. Arithmetic Slices II - Subsequence](src/problem/p0446_arithmetic_slices_ii_subsequence)
+  * 2D DP, with a data structure counts[i][d]. It counts the arithmetic subsequence ending at nums[i] with difference d with length at least 2. 
+* [458. Poor Pigs](src/problem/p0458_poor_pigs.rs)
+  * Smart tricks explained [here](https://leetcode.com/problems/poor-pigs/discuss/94266/Another-explanation-and-solution)
+* [460. LFU Cache](src/problem/p0460_lfu_cache.py)
+  * `frq_lists`, which maps the frequency to the list of elements with the associated frequency. 
+  * `key2frq_node`, which maps the element key to the frequency and the list node
+  
 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:

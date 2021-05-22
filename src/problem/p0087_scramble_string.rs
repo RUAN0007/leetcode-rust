@@ -53,8 +53,55 @@ pub struct Solution {}
 
 // submission codes start here
 
+use std::collections::HashMap;
 impl Solution {
+    pub fn is_scramble_topdown(s1: &Vec<char>, start1 : usize, end1 : usize, 
+        s2: &Vec<char>, start2 : usize, end2 : usize, cache : &mut HashMap<(usize,usize,usize), bool>, level : usize) -> bool {
+        assert_eq!(end1 - start1, end2 - start2);
+        let pad : String = (0..level).map(|x|{"  "}).collect();
+        let l : usize = end1 - start1;
+        if l == 1 { return s1[start1] == s2[start2]; }
+        if let Some(&cached) = cache.get(&(start1, start2, l)) { 
+            return cached; 
+        }
+
+        println!("{}start1={}, end1={}, start2={}, end2={}", pad, start1, end1, start2, end2);
+        let mut result : bool = false;
+        for i in 1..l {
+            let mid1 : usize = start1 + i;
+            let mid2 : usize = start2 + i;
+
+            println!("{}i={},mid1={}, mid2={}",pad, i, mid1, mid2);
+            if Self::is_scramble_topdown(s1, start1, mid1, s2, start2, mid2, cache, level+1) && 
+                Self::is_scramble_topdown(s1, mid1, end1, s2, mid2, end2, cache, level + 1) {
+                    result = true;
+                    break;
+            }
+
+            let mid1 : usize = start1 + i;
+            let mid2 : usize = end2 - i;
+
+            println!("{}i={},mid1={}, mid2={}",pad, i, mid1, mid2);
+            if Self::is_scramble_topdown(s1, start1, mid1, s2, mid2, end2, cache, level + 1) && 
+                Self::is_scramble_topdown(s1, mid1, end1, s2, start2, mid2, cache, level+1) {
+                    result = true;
+                    break;
+            }
+
+        }
+        cache.insert((start1, start2, l), result);
+        println!("{}start1={}, end1={}, start2={}, end2={}, result={}", pad, start1, end1, start2, end2, result);
+        result
+    }
+
     pub fn is_scramble(s1: String, s2: String) -> bool {
+        let s1 : Vec<char> = s1.chars().collect();
+        let s2 : Vec<char> = s2.chars().collect();
+        let mut cache : HashMap<(usize, usize, usize), bool> = HashMap::new();
+        Self::is_scramble_topdown(&s1, 0, s1.len(), &s2, 0, s2.len(), &mut cache, 0)
+    }
+
+    pub fn is_scramble_bottomup(s1: String, s2: String) -> bool {
         if s1.len() != s2.len() {return false;}
         let l : usize = s1.len();
         // scrambled[k][i][j] denote whether s1[i..i+k] can be scrambled from s2[i..i+k]. 
@@ -95,7 +142,9 @@ mod tests {
 
     #[test]
     fn test_87() {
-        assert!(Solution::is_scramble("great".to_owned(), "rgeat".to_owned()));
-        assert!(!Solution::is_scramble("abcde".to_owned(), "caebd".to_owned()));
+        // assert!(Solution::is_scramble("great".to_owned(), "rgeat".to_owned()));
+        // assert!(!Solution::is_scramble("abcde".to_owned(), "caebd".to_owned()));
+
+        assert!(Solution::is_scramble("abcd".to_owned(), "cdab".to_owned()));
     }
 }
