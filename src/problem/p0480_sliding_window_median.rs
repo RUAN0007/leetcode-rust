@@ -44,7 +44,15 @@ impl Solution {
         }
     }
 
-    
+    pub fn decrement_for_key(half : &mut BTreeMap<i32, usize>, key : i32) {
+        if half.contains_key(&key) {
+            *half.get_mut(&key).unwrap() -=1;
+            if half[&key] == 0 {
+                half.remove(&key);
+            }
+        }
+    }
+
     pub fn median_sliding_window(nums: Vec<i32>, k: i32) -> Vec<f64> {
         let k = k as usize;
         let mut first_k_sorted = nums.split_at(k).0.to_vec();
@@ -70,71 +78,25 @@ impl Solution {
             let num_to_add = nums[i];
             let num_to_remove = nums[i-k];
 
-            let right_min = *right_half.iter().next().unwrap().0;
-            let left_max = if left_half.is_empty() {-2147483648} else {
-                *left_half.iter().next_back().unwrap().0
-            };
-            // println!("left_half={:?}, right_half={:?}", left_half, right_half);
-            // println!("num_to_add={}, num_to_remove={}", num_to_add, num_to_remove);
-            let removed_on_left = !left_half.is_empty() && num_to_remove <= *left_half.iter().next_back().unwrap().0;
 
-            if removed_on_left && num_to_add < right_min {
-                let updated_count = *left_half.get(&num_to_remove).unwrap() - 1;
-                if updated_count == 0 {
-                    left_half.remove(&num_to_remove);
-                } else {
-                    left_half.insert(num_to_remove, updated_count);
-                }
-
-                *(left_half.entry(num_to_add).or_insert(0))+=1;
-            } else if removed_on_left && right_min <= num_to_add {
-                let updated_count = *left_half.get(&num_to_remove).unwrap() - 1;
-                if updated_count == 0 {
-                    left_half.remove(&num_to_remove);
-                } else {
-                    left_half.insert(num_to_remove, updated_count);
-                }
+            if left_half.contains_key(&num_to_remove) {
+                Self::decrement_for_key(&mut left_half, num_to_remove);
 
                 *(right_half.entry(num_to_add).or_insert(0))+=1;
+                let right_min : i32 = *right_half.iter().next().unwrap().0;
+                Self::decrement_for_key(&mut right_half, right_min);
 
-
-                // shift a min from right_half to left_half
-                let (&right_min_key, right_min_count) = right_half.iter_mut().next().unwrap();
-                *right_min_count-=1;
-                if *right_min_count == 0 {
-                    right_half.remove(&right_min_key);
-                }
-                *(left_half.entry(right_min_key).or_insert(0))+=1;
-
-            } else if !removed_on_left && right_min <= num_to_add {
-                let updated_count = *right_half.get(&num_to_remove).unwrap() - 1;
-                if updated_count == 0 {
-                    right_half.remove(&num_to_remove);
-                } else {
-                    right_half.insert(num_to_remove, updated_count);
-                }
-
-                *(right_half.entry(num_to_add).or_insert(0))+=1;
-            } else if !removed_on_left && num_to_add < right_min {
-                let updated_count = *right_half.get(&num_to_remove).unwrap() - 1;
-                if updated_count == 0 {
-                    right_half.remove(&num_to_remove);
-                } else {
-                    right_half.insert(num_to_remove, updated_count);
-                }
+                *(left_half.entry(right_min).or_insert(0))+=1;
+            } else if right_half.contains_key(&num_to_remove) {
+                Self::decrement_for_key(&mut right_half, num_to_remove);
 
                 *(left_half.entry(num_to_add).or_insert(0))+=1;
+                let left_max : i32 = *left_half.iter().next_back().unwrap().0;
+                Self::decrement_for_key(&mut left_half, left_max);
 
-                // shift the max from left_half to right_half
-                let (&left_max_key, left_max_count) = left_half.iter_mut().next_back().unwrap();
-                *left_max_count-=1;
-                if *left_max_count == 0 {
-                    left_half.remove(&left_max_key);
-                }
-                *(right_half.entry(left_max_key).or_insert(0))+=1;
-
+                *(right_half.entry(left_max).or_insert(0))+=1;
             } else {
-                panic!("No other condition (num_to_remove={}, num_to_add={}, left_max={}, right_min={})", num_to_remove, num_to_add, left_max, right_min);
+                panic!("Fail to find num={} to remove at left_half={:?}, and right_half={:?}", num_to_remove, left_half, right_half);
             }
 
             result.push(Self::median(&left_half, &right_half, k));

@@ -1388,6 +1388,53 @@ impl BacktrackUtil {
     }
 }
 
+
+// use BTreeMap key as the heap's weight. 
+struct BTreeMapAsHeap{}
+
+impl BTreeMapAsHeap {
+    pub fn push(heap : &mut BTreeMap<i32,Vec<i32>>, key : i32, val : i32){
+        heap.entry(key).or_insert(vec![]).push(val);
+    }
+
+    pub fn min(heap : &BTreeMap<i32,Vec<i32>>) -> Option<(i32, i32)> {
+        if let Some((&max_key, values)) = heap.iter().next() {
+            Some((max_key, *values.last().unwrap()))
+        } else {
+            None
+        }
+    }
+
+    pub fn max(heap : &BTreeMap<i32,Vec<i32>>) -> Option<(i32, i32)> {
+        if let Some((&max_key, values)) = heap.iter().next_back() {
+            Some((max_key, *values.last().unwrap()))
+        } else {
+            None
+        }
+    }
+
+    pub fn pop_max(heap : &mut BTreeMap<i32,Vec<i32>>) -> Option<(i32, i32)> {
+        if let Some((&max_key, _)) = heap.iter().next_back() {
+            let val : i32 = heap.get_mut(&max_key).unwrap().pop().unwrap();
+            if heap[&max_key].len() == 0 {heap.remove(&max_key);}
+            Some((max_key, val))
+        } else {
+            None
+        }
+    }
+
+    pub fn pop_min(heap : &mut BTreeMap<i32,Vec<i32>>) -> Option<(i32, i32)> {
+        if let Some((&min_key, _)) = heap.iter().next() {
+            let val : i32 = heap.get_mut(&min_key).unwrap().pop().unwrap();
+            if heap[&min_key].len() == 0 {heap.remove(&min_key);}
+            Some((min_key, val))
+        } else {
+            None
+        }
+    }
+}
+
+
 // submission codes end
 
 #[cfg(test)]

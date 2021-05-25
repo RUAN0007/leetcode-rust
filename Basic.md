@@ -255,16 +255,41 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
 ## Others
 * [229. Majority Element II](src/problem/p0229_majority_element_ii.rs)
   * (B-M Majority Vote)
-* [42. Trapping Rain Water](src/problem/p0042_trapping_rain_water.rs)
-  * Math Modeling
+## Hard
 * [4. Median of Two Sorted Arrays](src/problem/p0004_median_of_two_sorted_arrays.rs)
   * Off-one error
+* [10. Regular Expression Matching](src/problem/p0010_regular_expression_matching.rs)
+  * 2D DP
+* [23. Merge k Sorted Lists](src/problem/p0023_merge_k_sorted_lists.rs)
+  * Divide and Conquer
+* [25. Reverse Nodes in k-Group](src/problem/p0025_reverse_nodes_in_k_group.rs)
+  * Recursion
+* [30. Substring with Concatenation of All Words](src/problem/p0030_substring_with_concatenation_of_all_words.rs)
+  * Iterative String comparison
+* [37. Sudoku Solver](src/problem/p0037_sudoku_solver.rs)
+  * Recursion
+* [41. First Missing Positive](src/problem/p0041_first_missing_positive.rs)
+  * Bitset to mark for int presence.
+* [42. Trapping Rain Water](src/problem/p0042_trapping_rain_water.rs)
+  * Math Modeling
+* [44	Wildcard Matching](src/problem/p0044_wildcard_matching.rs)
+  * 2D DP
+* [51. N-Queens](src/problem/p0051_n_queens.rs)
+* [52. N-Queens II](src/problem/p0052_n_queens_ii.rs)
+  * Recursion
 * [60. Permutation Sequence](src/problem/p0060_permutation_sequence.rs)
   * Off-one error
-* [68. Text Justification](src/problem/p0068_text_justification.rs)
-  * Engineeringly Complex
+  * TODO:
 * [65. Valid Number](src/problem/p0065_valid_number.rs)
   * Engineeringly Complex
+* [68. Text Justification](src/problem/p0068_text_justification.rs)
+  * Engineeringly Complex
+* [72. Edit Distance](src/problem/p0072_edit_distance.rs)
+  * 2D DP
+* [76. Minimum Window Substring](src/problem/p0076_minimum_window_substring.rs)
+  * 2 Pointer (TODO:)
+* [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs)
+  * Monotonic Stack.
 * [85. Maximal Rectangle](src/problem/p0085_maximal_rectangle.rs)
   * Similar to [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs), solved with monotonic stack. 
 * [87. Scramble String](src/problem/p0087_scramble_string.rs)
@@ -273,12 +298,34 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
 * [115. Distinct Subsequences](src/problem/p0115_distinct_subsequences.rs)
   * TODO: To review
   * 2D DP. 
+* [123. Best Time to Buy and Sell Stock III](src/problem/p0123_best_time_to_buy_and_sell_stock_iii.rs)
+  * As above
+* [124. Binary Tree Maximum Path Sum](src/problem/p0124_binary_tree_maximum_path_sum.rs)
+  * Bottom-up Recursion.
+* [127. Word Ladder II](src/problem/p0126_word_ladder_ii.rs)
+  * TODO: timeout
+* [127. Word Ladder](src/problem/p0127_word_ladder.rs)
+  * BFS
+* [132. Palindrome Partitioning II](src/problem/p0132_palindrome_partitioning_ii.rs)
+  * 2D DP on 1D array (0 <=i<j<len)
 * [135. Candy](src/problem/p0135_candy.rs)
   * Smart tricks
+* [140. Word Break II](src/problem/p0140_word_break_ii.rs)
+  * Recursion
 * [149. Max Points on a Line](src/problem/p0149_max_points_on_a_line.rs)
   * Smart tricks: for each point Pi, count other points which share the identical slope with respect to Pi. 
+* [154	Find Minimum in Rotated Sorted Array II](src/problem/p0154_find_minimum_in_rotated_sorted_array_ii.rs)
+  * As above.
+* [164.  Maximum Gap](src/problem/p0164_maximum_gap.rs)
+  * Bucket Sort
+* [174.	Dungeon Game](src/problem/p0174_dungeon_game.rs)
+  * Bottom-up 2D DP, similar to [62. Unique Paths](src/problem/p0062_unique_paths.rs)
+* [188. Best Time to Buy and Sell Stock IV](src/problem/p0188_best_time_to_buy_and_sell_stock_iv.rs)
+  * As above
 * [212. Word Search II](src/problem/p0212_word_search_ii.rs)
   * Build and employ the trie during DFS traversal. 
+* [214. Shortest Palindrome](src/problem/p0214_shortest_palindrome.rs)
+  * Find the longest palindrome from the first char.
 * [218. The Skyline Problem](src/problem/p0218_the_skyline_problem.rs)
   * Collect critical points, which the top-left and top-right point of each rectangle. 
   * Sort the critical points based on point x-coordinate, left or right, and height. (Details commented in code. )
@@ -290,12 +337,22 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
       * Remove the corresponding rectangle in active ons
       * If it reduces the max height, update the result
   (Active rectangles can be maintained as a max-heap. )
+* [224. Basic Calculator](src/problem/p0224_basic_calculator.rs)
+  * State machine with Recursion.
 * [233. Number of Digit One](src/problem/p0233_number_of_digit_one.rs)
-  * Smart Tricks (To review)
+  * Smart Tricks 
+  * TODO: 
+* [239. Sliding Window Maximum](src/problem/p0239_sliding_window_maximum.rs)
+  * Max-heap
+* [273.  Integer to English Words ](src/problem/p0273_integer_to_english_words.rs)
+  * Engineeringly Complex
 * [282. Expression Add Operators](src/problem/p0282_expression_add_operators.rs)
   * Leverage stacks to compute the expression with operation precedence, e.g, multiplication is over addition. 
+  * Concatenation (no-op) treated as the top-prior.
 * [295. Find Median from Data Stream](src/problem/p0295_find_median_from_data_stream.rs)
-  * Maintain two data structures: the max heap for the smaller half the min heap for the greater half. 
+  * Min-max heap. 
+* [297.  Serialize and Deserialize Binary Tree](src/problem/p0297_serialize_and_deserialize_binary_tree.rs)
+  * Preorder Traversal with the null marker
 * [301. Remove Invalid Parentheses](src/problem/p0301_remove_invalid_parentheses.rs)
   * Recursion with duplicates.
   * For each collected results after one round of recursion, do another round of recursion. 
@@ -312,6 +369,8 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Prepare a vector of prefix sum S
   * For each i, count j > i s.t S\[j\]-S\[i\] within the range
     * Leverage the MergeSort, similar to [315. Count of Smaller Numbers After Self](src/problem/p0315_count_of_smaller_numbers_after_self.rs).
+* [329. Longest Increasing Path in a Matrix](src/problem/p0329_longest_increasing_path_in_a_matrix.rs
+  * 2D DP with Memoization.
 * [330. Patching Array](src/problem/p0330_patching_array.rs)
   * Smart Tricks by Recursion: Assume the previous i number can attain \[0,next_miss]),
     * If num[i] <= next_miss:the range can be augment to [0, next_miss+num[i]) by considering num[i].
@@ -341,6 +400,8 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
 * [407. Trapping Rain Water II](src/problem/p0407_trapping_rain_water_ii.rs)
   * The trapped water volume of a unit is determined by the lowest among all the highest units in each path towards the boundary.
   * Leverage a priority queue. 
+* [410.	Split Array Largest Sum](src/problem/p0410_split_array_largest_sum.rs)
+  * Binary Search with the countable result candidate and easy verification. 
 * [420. Strong Password Checker](src/problem/p0420_strong_password_checker.rs)
   * Mathematically tricky. 
 * [432. All O`one Data Structure](src/problem/p0432_all_oone_data_structure.rs)
@@ -357,7 +418,25 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
 * [460. LFU Cache](src/problem/p0460_lfu_cache.py)
   * `frq_lists`, which maps the frequency to the list of elements with the associated frequency. 
   * `key2frq_node`, which maps the element key to the frequency and the list node
-  
+* [466. Count The Repetitions](src/problem/p0466_count_the_repetitions.rs)
+  * Two-pointer approach to check one string is a subsequence of the other
+  * Make the process cyclic to accommodate for repetition. 
+* [472. Concatenated Words](src/problem/p0472_concatenated_words.rs)
+  * 2D DP to test a word is concatenated by others in a dictionary. 
+* [479. Largest Palindrome Product]()
+  * Too mathematically hard to attempt
+* [480. Sliding Window Median](src/problem/p0480_sliding_window_median.rs)
+  * Small and big heap/BtreeMap. 
+* [483.	Smallest Good Base](src/problem/p0483_smallest_good_base.rs)
+  * Mathematical Tricks explained [here](https://leetcode.com/problems/smallest-good-base/discuss/96587/Python-solution-with-detailed-mathematical-explanation-and-derivation)
+* [488. Zuma Game](src/problem/p0488_zuma_game.rs)
+  * Backtrack for each combination of possible insertion position and chars.
+  * Cached to deduplicate. 
+* [493. Reverse Pairs](src/problem/p0493_reverse_pairs.rs)
+  * Count during the merge sort
+* [502. IPO](src/problem/p0502_ipo.rs)
+  * Pick the capital-allowed with the highest profit
+  * Leverage min-max heap. 
 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:
