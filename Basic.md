@@ -437,6 +437,18 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
 * [502. IPO](src/problem/p0502_ipo.rs)
   * Pick the capital-allowed with the highest profit
   * Leverage min-max heap. 
+* [514. Freedom Trail](src/problem/p0514_freedom_trail.rs)
+  * 2D DP
+* [517. Super Washing Machines](src/problem/p0517_super_washing_machines.rs)
+  * Mathematical Tricks
+* [546. Remove Boxes](src/problem/p0546_remove_boxes.rs)
+  * 3D DP (Smart Recursion Formulation!)
+* [552. Student Attendance Record II](src/problem/p0552_student_attendance_record_ii.rs)
+  * 3D DP (Smart and Generic Recursion Formulation!)
+    * 1st dimension on n:# of days
+    * 2nd dimension on the # of current absent days. 
+    * 3nd dimension on the # of trailing leave days
+  * Given the limited cardinality, the last two dimensions can be unrolled as named variables. 
 
 # [Collected Template](src/problem/p0000_template.rs)
 * Data structure:

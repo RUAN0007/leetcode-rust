@@ -231,3 +231,7 @@ mod p0483_smallest_good_base;
 mod p0488_zuma_game;
 mod p0493_reverse_pairs;
 mod p0502_ipo;
+mod p0514_freedom_trail;
+mod p0517_super_washing_machines;
+mod p0546_remove_boxes;
+mod p0552_student_attendance_record_ii;
