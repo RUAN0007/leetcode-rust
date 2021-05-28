@@ -279,7 +279,6 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Recursion
 * [60. Permutation Sequence](src/problem/p0060_permutation_sequence.rs)
   * Off-one error
-  * TODO:
 * [65. Valid Number](src/problem/p0065_valid_number.rs)
   * Engineeringly Complex
 * [68. Text Justification](src/problem/p0068_text_justification.rs)
@@ -287,7 +286,7 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
 * [72. Edit Distance](src/problem/p0072_edit_distance.rs)
   * 2D DP
 * [76. Minimum Window Substring](src/problem/p0076_minimum_window_substring.rs)
-  * 2 Pointer (TODO:)
+  * 2-Pointer Approach
 * [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs)
   * Monotonic Stack.
 * [85. Maximal Rectangle](src/problem/p0085_maximal_rectangle.rs)
@@ -296,7 +295,6 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * Bottom-up approach with the increment on the substring length
   * Top-down with memoization
 * [115. Distinct Subsequences](src/problem/p0115_distinct_subsequences.rs)
-  * TODO: To review
   * 2D DP. 
 * [123. Best Time to Buy and Sell Stock III](src/problem/p0123_best_time_to_buy_and_sell_stock_iii.rs)
   * As above
@@ -340,8 +338,7 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
 * [224. Basic Calculator](src/problem/p0224_basic_calculator.rs)
   * State machine with Recursion.
 * [233. Number of Digit One](src/problem/p0233_number_of_digit_one.rs)
-  * Smart Tricks 
-  * TODO: 
+  * Smart Tricks to count Digit One in each digit position. 
 * [239. Sliding Window Maximum](src/problem/p0239_sliding_window_maximum.rs)
   * Max-heap
 * [273.  Integer to English Words ](src/problem/p0273_integer_to_english_words.rs)

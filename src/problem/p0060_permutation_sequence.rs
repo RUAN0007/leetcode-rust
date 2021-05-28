@@ -55,7 +55,7 @@ impl Solution {
         return result;
     }
 
-    pub fn get_permutation(n: i32, k: i32) -> String {
+    pub fn get_permutation_backup(n: i32, k: i32) -> String {
         let n = n as usize;
         let mut nums : Vec<char> = vec![];
         for i in 1..=n {
@@ -69,6 +69,38 @@ impl Solution {
 
         Self::get_helper(&factorial, &mut nums, k, n).iter().collect()
     }
+
+    pub fn recursive(factorials : &mut Vec<i32>, k : i32, nums : &mut Vec<i32>) -> String {
+        if nums.iter().filter(|&&x|{x!=-1}).next().is_none() {
+            return "".to_owned();
+        }
+
+        let last_factorial : i32 = factorials.pop().unwrap();
+        let nth_max : i32 = k / last_factorial;
+        let this_digit : String = nums.iter().filter(|&&x|{x!=-1}).nth(nth_max as usize).unwrap().to_string();
+        *nums.iter_mut().filter(|x|{**x!=-1}).nth(nth_max as usize).unwrap() = -1;
+
+        let k = k % last_factorial;
+        this_digit + &Self::recursive(factorials, k % last_factorial, nums)
+    }
+
+    pub fn get_permutation(n: i32, k: i32) -> String {
+        let k : i32 = k - 1;
+        let mut factorials : Vec<i32> = vec![1];
+        let mut factorial : i32 = 1;
+        for i in 1..n {
+            factorial *= i as i32;
+            factorials.push(factorial);
+        }
+
+        let mut nums : Vec<i32> = vec![];
+        for i in (1..=n) {
+            nums.push(i as i32);
+        }
+
+        Self::recursive(&mut factorials, k, &mut nums)
+    }
+
 }
 
 // submission codes end

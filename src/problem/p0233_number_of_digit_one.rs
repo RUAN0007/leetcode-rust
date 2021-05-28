@@ -39,6 +39,35 @@ impl Solution {
         }
 
         for i in 0..digit_count {
+            let base : i32 = usize::pow(10usize, i as u32) as i32;
+            let upper : i32 = n / base; // i-th digit inclusive
+            let lower : i32 = n % base;
+            let mut this_digit_count : i32 = 0;    
+            if upper % 10 > 1 {
+                this_digit_count = (upper / 10 + 1) * base;
+            } else if upper % 10 == 1 {
+                this_digit_count = upper / 10 * base + lower + 1;
+            } else {
+                this_digit_count = upper / 10 * base;
+            }
+            // println!("i={}, upper={},lower={}, this_digit_count={}", i, upper, lower, this_digit_count);
+            count += this_digit_count;
+        }
+        count
+    }
+
+    pub fn count_digit_one_official(n: i32) -> i32 {
+        let mut k : i32 = 1;
+        let mut count : i32 = 0;
+
+        let mut digit_count : usize = 0;
+        let mut tmp : usize = n as usize;
+        while tmp != 0 {
+            digit_count+=1;
+            tmp =  tmp / 10;
+        }
+
+        for i in 0..digit_count {
             let k : i32 = usize::pow(10usize, i as u32) as i32;
             // e.g, i=2, 12145 -> up: 121, down=45
             let up : i32 = n / k; // all prefix digits until i inclusive
