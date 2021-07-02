@@ -1079,6 +1079,9 @@ impl Util {
         let op_mref : Option<&mut i32> = op.as_mut();
         let op1 : Option<i32> = op.take(); // now op is None
         let none_vec : Vec<Option<i32>> = (0..26).map(|_| None).collect();
+
+        const NONE: Option<i32> = None;
+        let none_array : [Option<i32>;3] = [NONE;3];
     }
 
     pub fn input() {
@@ -1166,6 +1169,12 @@ impl MathUtil {
         use rand::Rng;
         let mut rng = rand::thread_rng();
         rng.gen::<i32>()
+    }
+
+    pub fn rand_f64range() -> f64 {
+        use rand::Rng;
+        let mut rng = rand::thread_rng(); 
+        rng.gen_range(0.0, 1.0)
     }
 }
 
@@ -1832,6 +1841,24 @@ mod tests {
         MapUtil::orderedset_misc();
         VecUtil::iterator_misc();
         VecUtil::misc();
+    }
+
+    #[test]
+    fn test_binary_heap() {
+        use std::collections::BinaryHeap;
+        let mut max_heap : BinaryHeap<i32> = BinaryHeap::new();
+        max_heap.push(10);
+        max_heap.push(20);
+        max_heap.push(2);
+
+        assert_eq!(max_heap.pop(), Some(20));
+        assert_eq!(max_heap.peek(), Some(&10));
+        assert_eq!(max_heap.pop(), Some(10));
+        assert_eq!(max_heap.pop(), Some(2));
+        assert_eq!(max_heap.pop(), None);
+
+        let max_heap : BinaryHeap<i32> = BinaryHeap::from(vec![1,2,3]);
+        assert_eq!(max_heap.peek(), Some(&3));
     }
 
 }

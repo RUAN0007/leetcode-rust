@@ -45,7 +45,64 @@ pub struct Solution {}
 
 impl Solution {
     pub fn game_of_life(board: &mut Vec<Vec<i32>>) {
-        
+        let row_count : usize = board.len();            
+        let col_count : usize = board[0].len();            
+
+        for i in 0..row_count {
+            for j in 0..col_count {
+                let mut live_count : usize = 0;
+                if 1 <= i && 1 <= j && board[i-1][j-1] & 0b1 == 1 {
+                    live_count+=1; // left-up
+                }
+
+                if 1 <= i && board[i-1][j] & 0b1 == 1 {
+                    live_count+=1; // up
+                }
+
+                if 1 <= i && j < col_count - 1 && board[i-1][j+1] & 0b1 == 1{
+                    live_count +=1; // right up
+                }
+
+                if 1 <= j && board[i][j-1] & 0b1 == 1 {
+                    live_count +=1; // left 
+                }
+
+                if j < col_count - 1 && board[i][j+1] & 0b1 == 1 {
+                    live_count +=1; // right
+                }
+
+                if  i < row_count - 1 && 1 <= j && board[i+1][j-1] & 0b1 == 1 {
+                    live_count+=1; // left-bottom
+                }
+
+                if  i < row_count - 1 && board[i+1][j] & 0b1 == 1 {
+                    live_count+=1; // bottom
+                }
+
+                if  i < row_count - 1 && j < col_count - 1 && board[i+1][j+1] & 0b1 == 1{
+                    live_count +=1; // right bottom
+                }
+
+                // println!("i={},j={},live_count={}",i,j,live_count);
+                if board[i][j] == 1 {
+                    if live_count == 2 || live_count == 3 {
+                        board[i][j] |= 0b10;
+                    }
+                } else if live_count == 3 {
+                        board[i][j] |= 0b10;
+                }
+            }
+        }
+
+        for i in 0..row_count {
+            for j in 0..col_count {
+                if board[i][j] & 0b10 != 0 {
+                    board[i][j] = 1;
+                } else {
+                    board[i][j] = 0;
+                }
+            }
+        }
     }
 }
 

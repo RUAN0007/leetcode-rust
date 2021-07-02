@@ -1,12 +1,21 @@
 # Typical Problems
 ## List
 ### Traversal
+```
+# Length computation
+let mut node_ptr : &ListNode = head.as_ref().unwrap();
+while let Some(ref next) = node_ptr.next {
+    node_ptr = next;
+    l+=1;
+}
+```
 * [234 Palindrome Linked List](src/problem/p0234_palindrome_linked_list.rs)
 ### Manipulation
 * [206 Reverse Linked List](src/problem/p0206_reverse_linked_list.rs)
 * [21 Merge Two Sorted Lists](src/problem/p0021_merge_two_sorted_lists.rs)
   * By list heads
 * [19 Remove Nth Node From End of List](src/problem/p0019_remove_nth_node_from_end_of_list.rs)
+* [92. Reverse Linked List II](src/problem/p0092_reverse_linked_list_ii.rs)
   * By mutable references
 ### Hard
 * [25 Reverse Nodes in k-Group](src/problem/p0025_reverse_nodes_in_k_group.rs)
@@ -15,6 +24,7 @@
 ## Tree
 ### Preorder/Inorder/Postorder Traversal
 * [94. Binary Tree Inorder Traversal](src/problem/p0094_binary_tree_inorder_traversal.rs)
+* [Preorder](https://www.geeksforgeeks.org/iterative-preorder-traversal/) and [In-order](https://www.geeksforgeeks.org/iterative-preorder-traversal/) Traversal with Stack
 ### BFS Traversal
 * [107 Binary Tree Level Order Traversal II](src/problem/p0107_binary_tree_level_order_traversal_ii.rs)
 ### Manipulation
@@ -37,8 +47,9 @@ During iteration, think when to update parameters, when to process these paramet
 Extremely powerful for leftmost/rightmost smaller/greater problems in an array.
 * [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs)
 * [907. Sum of Subarray Minimums](src/problem/p0907_sum_of_subarray_minimums.rs)
-### Hard
-* [84. Largest Rectangle in Histogram](src/problem/p0084_largest_rectangle_in_histogram.rs)
+Employ to compute a min lexicographically ordered string or numbers with fixed digits,  with certain actions satisfied. 
+* [316. Remove Duplicate Letters](src/problem/p0316_remove_duplicate_letters.rs)
+* [321. Create Maximum Number](src/problem/p0312_burst_balloons.rs)
 
 
 ## Recursions
@@ -252,9 +263,43 @@ with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[i
   * with_stock_balances[i][k] = max(with_stock_balances[i-1][k], no_stock_balances[**i-2**][k-1] - prices[i])
 
 
-## Others
+## Non-intuitive Medium
 * [229. Majority Element II](src/problem/p0229_majority_element_ii.rs)
   * (B-M Majority Vote)
+* [238. Product of Array Except Self](src/problem/p0238_product_of_array_except_self.rs)
+* [240. Search a 2D Matrix II](src/problem/p0240_search_a_2d_matrix_ii.rs)
+* [241. Different Ways to Add Parentheses](src/problem/p0241_different_ways_to_add_parentheses.rs)
+* [264. Ugly Number II](src/problem/p0264_ugly_number_ii.rs)
+  * DP
+* [279. Perfect Squares](src/problem/p0279_perfect_squares.rs)
+  * Knapsack DP
+* [307. Range Sum Query - Mutable](src/problem/p0307_range_sum_query_mutable.rs)
+  * Binary Index Tree, detailed [here](https://www.topcoder.com/thrive/articles/Binary%20Indexed%20Trees#introduction)
+    * Range sum query
+* [310. Minimum Height Trees](src/problem/p0310_minimum_height_trees.rs)
+    * BFS from leaves
+* [334. Increasing Triplet Subsequence](src/problem/p0334_increasing_triplet_subsequence.rs)
+  * Smart math tricks.
+* [341. Flatten Nested List Iterator](src/problem/p0341_flatten_nested_list_iterator.rs)
+  * Pre-order Traversal with Stack.
+* [365. Water and Jug Problem](src/problem/p0365_water_and_jug_problem.rs)
+  * Bézout's identity: if d is a multiple of gcd(x,y), then d can be represented by ax+by (a,b,x,y are integers.)
+* [368. Largest Divisible Subset](src/problem/p0368_largest_divisible_subset.rs)
+  * 2D DP on Array
+* [372. Super Pow](src/problem/p0372_super_pow.rs)
+  * Rely on Eulers' Theorem to form a recursion. 
+* [376. Wiggle Subsequence](src/problem/p0376_wiggle_subsequence.rs)
+  * 1D DP, greedy. 
+* [382. Linked List Random Node](src/problem/p0382_linked_list_random_node.rs)
+  * [Reservoir Sampling](https://gregable.com/2007/10/reservoir-sampling.html)
+    * Select k elements from an unbounded stream with uniform probability. 
+* [384. Shuffle an Array](src/problem/p0384_shuffle_an_array.rs)
+  * [FY Algorithm](https://www.geeksforgeeks.org/shuffle-a-given-array-using-fisher-yates-shuffle-algorithm/) for random shuffling. 
+* [390. Elimination Game](src/problem/p0390_elimination_game.rs)
+  * Focus on invariant head element. 
+* [395. Longest Substring with At Least K Repeating Characters](src/problem/p0395_longest_substring_with_at_least_k_repeating_characters.rs)
+  * Divide and Conquer (Not 2 Pointer). For each recursion, identify a char which can never be included in the substring, due to the insufficient frequency. Use this char as split points and continue on the substring. 
+
 ## Hard
 * [4. Median of Two Sorted Arrays](src/problem/p0004_median_of_two_sorted_arrays.rs)
   * Off-one error

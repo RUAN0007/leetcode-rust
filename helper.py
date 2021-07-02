@@ -22,13 +22,14 @@ def test_solution(qid):
         if re.match(prob_name_pattern, filename):
             prob_filename = filename
             break
-    
+
     if prob_filename == "":
         eprint("Fail to find Problem {}".format(qid))
         return 1
 
     filename_no_suffix = prob_filename.split(".")[0]
     command = "bash -c \"cargo test problem::{}::tests::test_{} -- --exact --nocapture\"".format(filename_no_suffix, qid)
+    print command
     os.system(command)
 
     return 0
